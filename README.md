@@ -167,6 +167,3 @@ export class MyTools {
 - LinkedIn: <https://linkedin.com/company/nitrostack-ai/>
 - GitHub: <https://github.com/nitrostackai>
 
-## License
-
-MIT

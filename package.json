@@ -25,6 +25,7 @@
     "typescript": "^5.3.3"
   },
   "author": "Team Zenith",
+  "license": "UNLICENSED",
   "nitrostack": {
     "skillsVersion": "1.0.0",
     "appName": "Verifai"
