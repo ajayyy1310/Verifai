@@ -1807,7 +1807,7 @@ export default function AuditFeed() {
                         ) : (
                           // Fallback to mismatches if claims are not populated
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {audit.mismatches.map((mismatch, idx) => (
+                            {(audit.mismatches || []).map((mismatch, idx) => (
                               <div
                                 key={idx}
                                 style={{
