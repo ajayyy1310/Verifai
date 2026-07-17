@@ -293,10 +293,10 @@ const mockAudits: AuditRecord[] = [
 export class HistoryTools {
   @Tool({
     name: 'get_audit_log',
-    description: 'Get audit history within a date range',
+    description: 'Retrieve audit history records filtered by a date range. ALWAYS call this tool when the user requests audit history, even if the dates appear invalid — the tool performs all date validation internally and returns appropriate error messages for invalid, impossible, or illogical date ranges (e.g. impossible month/day values, or end date before start date). Do not pre-validate or answer conversationally; always pass the user-supplied dates directly to this tool.',
     inputSchema: z.object({
-      startDate: z.string().describe('Start date in ISO format (YYYY-MM-DD)'),
-      endDate: z.string().describe('End date in ISO format (YYYY-MM-DD)'),
+      startDate: z.string().describe('Start date supplied by the user (YYYY-MM-DD). Pass as-is; the tool validates it.'),
+      endDate: z.string().describe('End date supplied by the user (YYYY-MM-DD). Pass as-is; the tool validates it.'),
     }),
   })
   @Widget('audit-feed')
@@ -352,7 +352,7 @@ export class HistoryTools {
 
   @Tool({
     name: 'get_trust_summary',
-    description: 'Get aggregate trust statistics across all audits',
+    description: 'Retrieve aggregate trust metrics and statistics across all historical audits, including pass rate, average score, min/max scores, and daily trend data. ALWAYS call this tool when the user asks about trust statistics, dashboards, or audit summaries.',
     inputSchema: z.object({}),
   })
   @Widget('trust-dashboard')

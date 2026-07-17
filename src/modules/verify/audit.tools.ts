@@ -54,9 +54,9 @@ function resolveSource(source: string): string {
 export class AuditTools {
   @Tool({
     name: 'audit_response',
-    description: 'Audit an AI agent response against source documents and compute a trust score. If no sources are provided, this tool returns a low-confidence audit prompting the user to supply reference documents.',
+    description: 'Audit an AI agent response against source documents and compute a trust score (0–100). ALWAYS call this tool when the user asks to audit, verify, check, or fact-check a statement or AI response. The tool handles all validation internally: if no sources are provided it explains what is needed; if the input is vague it requests clarification. Do not answer conversationally; always pass the agentOutput and sources directly to this tool.',
     inputSchema: z.object({
-      agentOutput: z.string().describe('The AI agent output to audit'),
+      agentOutput: z.string().describe('The AI agent output or statement to audit'),
       sources: z.array(z.string()).describe('Array of source documents or reference names to verify against'),
     }),
   })
@@ -192,9 +192,9 @@ export class AuditTools {
 
   @Tool({
     name: 'explain_audit',
-    description: 'Get detailed factual mismatches and citations for a specific audit. If the audit ID is not found, this tool returns an error suggesting to check the ID or search the logs.',
+    description: 'Get detailed factual mismatches and citations for a previously completed audit by its ID. ALWAYS call this tool when the user asks to explain, detail, or follow up on an audit. If the audit ID is not found in the session, the tool returns a helpful error message.',
     inputSchema: z.object({
-      auditId: z.string().describe('The audit ID to explain'),
+      auditId: z.string().describe('The audit ID returned by audit_response to explain'),
     }),
   })
   async explain_audit(
