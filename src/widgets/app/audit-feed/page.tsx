@@ -1734,7 +1734,7 @@ export default function AuditFeed() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         {(audit.mismatches?.length || 0) > 0 ? (
                           <span style={{ color: '#d29922', fontWeight: 500 }}>
-                            ⚠️ {audit.mismatches.length} mismatch{audit.mismatches.length !== 1 ? 'es' : ''}
+                            ⚠️ {audit.mismatches?.length} mismatch{audit.mismatches?.length !== 1 ? 'es' : ''}
                           </span>
                         ) : (
                           <span style={{ color: '#3fb950' }}>✓ 0 mismatches</span>
