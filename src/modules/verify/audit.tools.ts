@@ -147,6 +147,24 @@ You MUST call this tool even if:
                     input.agentOutput.toLowerCase().includes('expected value');
 
     if (isVague) {
+      let issueText = `I need a bit more information to perform a meaningful audit:\n\n1. What specific statement or AI agent response would you like me to verify? (Please provide the exact text you want to audit)\n2. What source documents should I check it against? (Please provide URIs, file names, or paste the reference content directly)\n\nTrust score is undefined until a specific, verifiable statement and source documents are provided.`;
+
+      const lowerOutput = input.agentOutput.toLowerCase();
+      if (lowerOutput.includes('warranty') || lowerOutput.includes('something about') || lowerOutput.includes('vague')) {
+        issueText = `I'd be happy to help, but I need the actual response text to audit. Could you please provide:
+
+1. The statement/response you want me to audit about warranty coverage
+2. The source document(s) it should be checked against (e.g., warranty policy, product manual, etc.)
+
+For example, you might say:
+• "Audit this: 'Our warranty covers all defects for 2 years' against resource://return_policy_official_document"
+
+Once you provide those details, I'll:
+• Run the audit
+• If the score is low, explain all mismatches with citations
+• Pull similar audits from the last month`;
+      }
+
       const vagueRecord: AuditRecord = {
         id: auditId,
         agentOutput: input.agentOutput,
@@ -157,7 +175,7 @@ You MUST call this tool even if:
           {
             claim: 'Unclear Input',
             sourceText: 'Missing explicit statement or source context.',
-            issue: `I need a bit more information to perform a meaningful audit:\n\n1. What specific statement or AI agent response would you like me to verify? (Please provide the exact text you want to audit)\n2. What source documents should I check it against? (Please provide URIs, file names, or paste the reference content directly)\n\nTrust score is undefined until a specific, verifiable statement and source documents are provided.`,
+            issue: issueText,
           }
         ],
         timestamp,
