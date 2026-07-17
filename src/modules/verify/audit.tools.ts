@@ -49,7 +49,7 @@ function resolveSource(source: string): string {
     return 'Report B: Q3 profit margin was 12% and profit was $1.8 million.';
   }
   if (lowercase.includes('warranty')) {
-    return 'Warranty Terms: All products include a 1-year limited guarantee against manufacturing defects from the original purchase date. Accidental damage, water damage, and misuse are excluded from this guarantee. Customers must retain the original purchase receipt to claim the guarantee.';
+    return 'Product Protection Policy: All items sold include a 12-month limited guarantee against manufacturing defects from the original purchase date. Accidental damage, water damage, and misuse are excluded from this protection plan. Customers must retain the original receipt to make a claim.';
   }
   if (lowercase.includes('auth') || lowercase.includes('authentication') || lowercase.includes('security_policy')) {
     return 'Security Policy: The system supports three authentication methods: password-based login, two-factor authentication (2FA) via SMS, and OAuth 2.0 single sign-on (SSO).';
@@ -185,7 +185,7 @@ NEVER ask for clarification before calling this tool. Pass whatever the user pro
           {
             claim: 'Unclear Input',
             sourceText: 'Missing explicit statement or source context.',
-            issue: `I'd be happy to help you audit a statement about technology against sources about computers. However, I need a bit more information:\n\n1. What statement or AI response would you like me to audit? (Please provide the specific text you want to verify)\n2. What are the source documents? (Please provide the URIs, file paths, or content of the computer/technology sources you'd like me to verify against)\n\nOnce you give me those details, I can use the audit function to check the statement against your sources and compute a trust score.`,
+            issue: `I need a bit more information to perform a meaningful audit:\n\n1. What specific statement or AI agent response would you like me to verify? (Please provide the exact text you want to audit)\n2. What source documents should I check it against? (Please provide URIs, file names, or paste the reference content directly)\n\nTrust score is undefined until a specific, verifiable statement and source documents are provided.`,
           }
         ],
         timestamp,
