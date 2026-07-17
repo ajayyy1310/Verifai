@@ -255,7 +255,7 @@ export function computeTrustScore(agentOutput: string, sources: string[]): {
   });
 
   // Calculate score: percentage of supported claims
-  const score = claims.length > 0 ? supportedCount / claims.length : 0.5;
+  const score = claims.length > 0 ? supportedCount / claims.length : 0.0;
   const verdict = score >= 0.7 ? 'PASS' : 'BLOCK';
 
   return {
