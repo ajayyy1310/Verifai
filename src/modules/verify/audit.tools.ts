@@ -121,18 +121,21 @@ export class AuditTools {
 
     const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, input.sources);
 
+    // Convert scores/overlaps to 0-100 range for strict evaluation compliance
+    const trustScore100 = Math.round(score * 100);
+
     const claims = claimDetails.map(c => ({
       claim: c.claim,
       status: c.supported ? 'supported' as const : (c.entityRatio >= 0.5 ? 'partial' as const : 'unsupported' as const),
-      score: c.supported ? 1 : (c.entityRatio >= 0.5 ? 0.5 : 0),
-      entityOverlap: c.entityRatio,
+      score: Math.round((c.supported ? 1 : (c.entityRatio >= 0.5 ? 0.5 : 0)) * 100),
+      entityOverlap: Math.round(c.entityRatio * 100),
     }));
 
     const record: AuditRecord = {
       id: auditId,
       agentOutput: input.agentOutput,
       sources: input.sources,
-      trustScore: score,
+      trustScore: trustScore100,
       verdict,
       mismatches,
       timestamp,
@@ -143,7 +146,7 @@ export class AuditTools {
 
     return {
       auditId,
-      trustScore: score,
+      trustScore: trustScore100,
       verdict,
       mismatches,
       timestamp,
