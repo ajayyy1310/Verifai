@@ -14,6 +14,12 @@ interface AuditRecord {
   mismatches: Mismatch[];
   timestamp: string;
   imageUrl?: string;
+  claims?: Array<{
+    claim: string;
+    status: 'supported' | 'partial' | 'unsupported';
+    score: number;
+    entityOverlap: number;
+  }>;
 }
 
 interface Mismatch {
@@ -40,10 +46,23 @@ export class AuditTools {
     verdict: 'PASS' | 'BLOCK' | 'FLAG';
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     timestamp: string;
+    claims: Array<{
+      claim: string;
+      status: 'supported' | 'partial' | 'unsupported';
+      score: number;
+      entityOverlap: number;
+    }>;
   }> {
-    const { score, verdict, mismatches } = computeTrustScore(input.agentOutput, input.sources);
+    const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, input.sources);
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
+
+    const claims = claimDetails.map(c => ({
+      claim: c.claim,
+      status: c.supported ? 'supported' as const : (c.entityRatio >= 0.5 ? 'partial' as const : 'unsupported' as const),
+      score: c.supported ? 1 : (c.entityRatio >= 0.5 ? 0.5 : 0),
+      entityOverlap: c.entityRatio,
+    }));
 
     const record: AuditRecord = {
       id: auditId,
@@ -53,6 +72,7 @@ export class AuditTools {
       verdict,
       mismatches,
       timestamp,
+      claims,
     };
 
     auditStore.set(auditId, record);
@@ -63,6 +83,7 @@ export class AuditTools {
       verdict,
       mismatches,
       timestamp,
+      claims,
     };
   }
 
@@ -84,6 +105,12 @@ export class AuditTools {
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     sources: string[];
     timestamp: string;
+    claims: Array<{
+      claim: string;
+      status: 'supported' | 'partial' | 'unsupported';
+      score: number;
+      entityOverlap: number;
+    }>;
   }> {
     const record = auditStore.get(input.auditId);
 
@@ -99,6 +126,7 @@ export class AuditTools {
       mismatches: record.mismatches,
       sources: record.sources,
       timestamp: record.timestamp,
+      claims: record.claims || [],
     };
   }
 }

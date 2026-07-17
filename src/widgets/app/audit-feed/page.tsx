@@ -46,7 +46,7 @@ export default function AuditFeed() {
   const [sourcesInput, setSourcesInput] = useState('');
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditError, setAuditError] = useState<string | null>(null);
-  
+
   // Dynamic live audit result state
   const [liveResult, setLiveResult] = useState<AuditRecord | null>(null);
   const [animatedScore, setAnimatedScore] = useState(0);
@@ -66,260 +66,756 @@ export default function AuditFeed() {
   const mockData: AuditFeedData = {
     audits: [
       {
-        id: 'audit_001',
-        agentOutput: 'TechCorp India reported a revenue of ₹450 crore for FY2025, representing a 22% increase from the previous year.',
-        sources: ['TechCorp India FY2025 financial statements show total revenue of ₹450 crore, growing 22% year-on-year.'],
-        trustScore: 0.95,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-10T10:00:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India reported a revenue of ₹450 crore for FY2025, representing a 22% increase from the previous year.',
-            bestSourceText: 'TechCorp India FY2025 financial statements show total revenue of ₹450 crore, growing 22% year-on-year.',
-            jaccard: 0.88,
-            entityOverlap: 1.0,
-            score: 0.95,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_1",
+        "agentOutput": "The company raised 45 million.",
+        "sources": [
+          "The company raised 45 million."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_002',
-        agentOutput: 'As of March 2025, TechCorp India employs over 1800 professionals across its offices.',
-        sources: ['Human Resource audit from March 2025 confirms total headcount of 1800 employees in TechCorp India.'],
-        trustScore: 0.92,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-11T11:00:00Z',
-        claims: [
-          {
-            claim: 'As of March 2025, TechCorp India employs over 1800 professionals across its offices.',
-            bestSourceText: 'Human Resource audit from March 2025 confirms total headcount of 1800 employees in TechCorp India.',
-            jaccard: 0.82,
-            entityOverlap: 1.0,
-            score: 0.92,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_2",
+        "agentOutput": "John Doe visited Paris.",
+        "sources": [
+          "John Doe visited Paris."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_003',
-        agentOutput: 'The executive leadership of TechCorp India features CEO Priya Sharma and CTO Arjun Mehta.',
-        sources: ['Corporate governance registry names Priya Sharma as Chief Executive Officer and Arjun Mehta as Chief Technology Officer.'],
-        trustScore: 0.94,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-11T16:30:00Z',
-        claims: [
-          {
-            claim: 'The executive leadership of TechCorp India features CEO Priya Sharma and CTO Arjun Mehta.',
-            bestSourceText: 'Corporate governance registry names Priya Sharma as Chief Executive Officer and Arjun Mehta as Chief Technology Officer.',
-            jaccard: 0.85,
-            entityOverlap: 1.0,
-            score: 0.94,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_3",
+        "agentOutput": "Inflation is at 5.5%.",
+        "sources": [
+          "Inflation is at 5.5%."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_004',
-        agentOutput: 'TechCorp\'s flagship platform TechFlow is currently used by 200 enterprises globally.',
-        sources: ['TechFlow enterprise client roster contains 200 verified corporate customers.'],
-        trustScore: 0.91,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-12T09:15:00Z',
-        claims: [
-          {
-            claim: 'TechCorp\'s flagship platform TechFlow is currently used by 200 enterprises globally.',
-            bestSourceText: 'TechFlow enterprise client roster contains 200 verified corporate customers.',
-            jaccard: 0.78,
-            entityOverlap: 1.0,
-            score: 0.91,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_4",
+        "agentOutput": "apple reported 100 million.",
+        "sources": [
+          "Apple reported 100 million."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_005',
-        agentOutput: 'TechCorp India raised ₹200 crore in its Series C funding round led by Sequoia India.',
-        sources: ['TechCorp India closed a ₹200 crore Series C funding round with Sequoia India as the lead investor.'],
-        trustScore: 0.93,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-13T14:20:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India raised ₹200 crore in its Series C funding round led by Sequoia India.',
-            bestSourceText: 'TechCorp India closed a ₹200 crore Series C funding round with Sequoia India as the lead investor.',
-            jaccard: 0.82,
-            entityOverlap: 1.0,
-            score: 0.93,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_5",
+        "agentOutput": "He won 5 medals!",
+        "sources": [
+          "He won 5 medals."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_006',
-        agentOutput: 'TechCorp India announced a strategic partnership with Infosys in March 2025.',
-        sources: ['Press release: TechCorp India and Infosys signed a joint partnership agreement in March 2025.'],
-        trustScore: 0.90,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-14T12:00:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India announced a strategic partnership with Infosys in March 2025.',
-            bestSourceText: 'Press release: TechCorp India and Infosys signed a joint partnership agreement in March 2025.',
-            jaccard: 0.75,
-            entityOverlap: 1.0,
-            score: 0.90,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_6",
+        "agentOutput": "The revenue was $50 million.",
+        "sources": [
+          "Total revenue hit $50 million this year."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_007',
-        agentOutput: 'TechCorp India received the prestigious NASSCOM AI Innovation Award in 2024.',
-        sources: ['NASSCOM 2024 award ceremony recognized TechCorp India for its pioneering work with the AI Innovation Award.'],
-        trustScore: 0.96,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-15T09:00:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India received the prestigious NASSCOM AI Innovation Award in 2024.',
-            bestSourceText: 'NASSCOM 2024 award ceremony recognized TechCorp India for its pioneering work with the AI Innovation Award.',
-            jaccard: 0.90,
-            entityOverlap: 1.0,
-            score: 0.96,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_7",
+        "agentOutput": "1,000 people attended.",
+        "sources": [
+          "1000 people attended the event."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_008',
-        agentOutput: 'TechCorp India is compliant with SOC 2 Type II and ISO 27001 security certifications.',
-        sources: ['Audit reports confirm TechCorp India maintains active SOC 2 Type II and ISO 27001 certifications.'],
-        trustScore: 0.89,
-        verdict: 'PASS',
-        mismatches: [],
-        timestamp: '2026-07-16T15:30:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India is compliant with SOC 2 Type II and ISO 27001 security certifications.',
-            bestSourceText: 'Audit reports confirm TechCorp India maintains active SOC 2 Type II and ISO 27001 certifications.',
-            jaccard: 0.72,
-            entityOverlap: 1.0,
-            score: 0.89,
-            status: 'supported'
-          }
-        ]
+        "id": "audit_test_8",
+        "agentOutput": "In 2023, Tesla delivered 1.8 million cars.",
+        "sources": [
+          "Tesla delivered 1.8 million cars in 2023."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_009',
-        agentOutput: 'TechCorp India announced the launch of its new payment product TechPay last week.',
-        sources: ['TechCorp India documentation does not mention any product named TechPay.'],
-        trustScore: 0.58,
-        verdict: 'FLAG',
-        mismatches: [
+        "id": "audit_test_9",
+        "agentOutput": "SpaceX launched Falcon 9.",
+        "sources": [
+          "Yesterday, SpaceX launched Falcon 9 successfully."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_10",
+        "agentOutput": "The new startup successfully raised $10 million.",
+        "sources": [
+          "The startup raised $10 million."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_11",
+        "agentOutput": "The state-of-the-art facility cost $5 million.",
+        "sources": [
+          "The state of the art facility cost $5 million."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_12",
+        "agentOutput": "Version 1.2.3 was released on 4.5.2023.",
+        "sources": [
+          "Version 1.2.3 was released on 4.5.2023."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_13",
+        "agentOutput": "Google built a new campus and hired 500 engineers.",
+        "sources": [
+          "Google built a new campus. It hired 500 engineers."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_14",
+        "agentOutput": "Google built a new campus and hired 500 engineers.",
+        "sources": [
+          "Google built a new campus. It hired 200 engineers."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
           {
-            claim: 'Agent stated: "TechPay product launch"',
-            sourceText: 'TechPay not in sources',
-            issue: 'Fabricated product launch: TechPay is not found in source documents.'
+            "claim": "Google built a new campus and hired 500 engineers",
+            "sourceText": "Google built a new campus. It hired 200 engineers.",
+            "issue": "Numbers in claim (500) not found in sources"
           }
         ],
-        timestamp: '2026-07-15T13:45:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India announced the launch of its new payment product TechPay last week.',
-            bestSourceText: 'TechCorp India documentation does not mention any product named TechPay.',
-            jaccard: 0.45,
-            entityOverlap: 0.66,
-            score: 0.58,
-            status: 'partial'
-          }
-        ]
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_010',
-        agentOutput: 'TechCorp India operates its headquarters from Chennai.',
-        sources: ['TechCorp India official registry lists its corporate headquarters in Delhi.'],
-        trustScore: 0.62,
-        verdict: 'FLAG',
-        mismatches: [
+        "id": "audit_test_15",
+        "agentOutput": "Growth was .5%.",
+        "sources": [
+          "Growth was 0.5%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
           {
-            claim: 'Agent stated: "headquarters from Chennai"',
-            sourceText: 'Chennai not in sources',
-            issue: 'Wrong office location: source document lists Delhi, not Chennai.'
+            "claim": "Growth was",
+            "sourceText": "Growth was 0.5%.",
+            "issue": "Low entity overlap (30%)"
           }
         ],
-        timestamp: '2026-07-16T10:15:00Z',
-        claims: [
-          {
-            claim: 'TechCorp India operates its headquarters from Chennai.',
-            bestSourceText: 'TechCorp India official registry lists its corporate headquarters in Delhi.',
-            jaccard: 0.50,
-            entityOverlap: 0.70,
-            score: 0.62,
-            status: 'partial'
-          }
-        ]
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_011',
-        agentOutput: 'Google has acquired TechCorp India for ₹5000 crore in cash.',
-        sources: ['TechCorp India remains an independent private entity with no acquisition history.'],
-        trustScore: 0.12,
-        verdict: 'BLOCK',
-        mismatches: [
+        "id": "audit_test_16",
+        "agentOutput": "Revenues grew by 5%.",
+        "sources": [
+          "Revenues grew by 10%. We had 5 new products."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
           {
-            claim: 'Agent stated: "Google has acquired TechCorp"',
-            sourceText: 'completely fabricated',
-            issue: 'Completely fabricated: No acquisition agreement has been signed.'
+            "claim": "Revenues grew by 5%",
+            "sourceText": "Revenues grew by 10%. We had 5 new products.",
+            "issue": "Numbers in claim (5%) not found in sources"
           }
         ],
-        timestamp: '2026-07-12T16:20:00Z',
-        claims: [
-          {
-            claim: 'Google has acquired TechCorp India for ₹5000 crore in cash.',
-            bestSourceText: 'TechCorp India remains an independent private entity with no acquisition history.',
-            jaccard: 0.15,
-            entityOverlap: 0.10,
-            score: 0.12,
-            status: 'unsupported'
-          }
-        ]
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
       },
       {
-        id: 'audit_012',
-        agentOutput: 'TechCorp India has launched its IPO on NSE at ₹1200 per share.',
-        sources: ['TechCorp India is privately held and has not filed any draft prospectuses for an IPO.'],
-        trustScore: 0.08,
-        verdict: 'BLOCK',
-        mismatches: [
+        "id": "audit_test_17",
+        "agentOutput": "Profit is ₹100 crore.",
+        "sources": [
+          "Profit is 100 crore."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_18",
+        "agentOutput": "100 million users.",
+        "sources": [
+          "100 billion users."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
           {
-            claim: 'Agent stated: "IPO on NSE at ₹1200"',
-            sourceText: 'completely fabricated',
-            issue: 'Completely fabricated IPO claim: No public listings exist.'
+            "claim": "100 million users",
+            "sourceText": "100 billion users.",
+            "issue": "Numbers in claim (100 million) not found in sources"
           }
         ],
-        timestamp: '2026-07-14T11:00:00Z',
-        claims: [
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_19",
+        "agentOutput": "1,234,567 dollars.",
+        "sources": [
+          "1234567 dollars."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_20",
+        "agentOutput": "High revenue growth.",
+        "sources": [
+          "Revenue grew 50%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
           {
-            claim: 'TechCorp India has launched its IPO on NSE at ₹1200 per share.',
-            bestSourceText: 'TechCorp India is privately held and has not filed any draft prospectuses for an IPO.',
-            jaccard: 0.10,
-            entityOverlap: 0.05,
-            score: 0.08,
-            status: 'unsupported'
+            "claim": "High revenue growth",
+            "sourceText": "Revenue grew 50%.",
+            "issue": "Low entity overlap (33%)"
           }
-        ]
+        ],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_21",
+        "agentOutput": "Wow.",
+        "sources": [
+          "Revenue grew 50%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [],
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_22",
+        "agentOutput": "It is the.",
+        "sources": [
+          "It is the company."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "It is the",
+            "sourceText": "It is the company.",
+            "issue": "Low entity overlap (30%)"
+          }
+        ],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_23",
+        "agentOutput": "Microsoft.",
+        "sources": [
+          "Microsoft grew 5%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Microsoft",
+            "sourceText": "Microsoft grew 5%.",
+            "issue": "Low entity overlap (30%)"
+          }
+        ],
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_24",
+        "agentOutput": "Microsoft 5",
+        "sources": [
+          "Microsoft grew 5%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Microsoft 5",
+            "sourceText": "Microsoft grew 5%.",
+            "issue": "Numbers in claim (5) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_25",
+        "agentOutput": "He won 500.",
+        "sources": [
+          "She won 500."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_26",
+        "agentOutput": "A is 1. B is 2.",
+        "sources": [
+          "A is 1.\nB is 2."
+        ],
+        "trustScore": 0.5,
+        "verdict": "FLAG",
+        "mismatches": [
+          {
+            "claim": "A is 1",
+            "sourceText": "A is 1. | B is 2.",
+            "issue": "Low entity overlap (30%)"
+          }
+        ],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_27",
+        "agentOutput": "Company X raised $10M from Y.",
+        "sources": [
+          "Company X raised $10M.\nThe funding was from Y."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_28",
+        "agentOutput": "X is 10.",
+        "sources": [
+          "X is 5.\nX is 10."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_29",
+        "agentOutput": "X is 10 and Y is 20.",
+        "sources": [
+          "X is 10.\nY is 15."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "X is 10 and Y is 20",
+            "sourceText": "X is 10. | Y is 15.",
+            "issue": "Numbers in claim (20) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_30",
+        "agentOutput": "X and Y went to Z.",
+        "sources": [
+          "X went to Z.\nY stayed home."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_31",
+        "agentOutput": "Mars colonization starts in 2030.",
+        "sources": [
+          "SpaceX launched a rocket."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Mars colonization starts in 2030",
+            "sourceText": "SpaceX launched a rocket.",
+            "issue": "Numbers in claim (2030) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_32",
+        "agentOutput": "Apple launched iPhone 15.",
+        "sources": [
+          "Samsung launched Galaxy S24."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Apple launched iPhone 15",
+            "sourceText": "Samsung launched Galaxy S24.",
+            "issue": "Numbers in claim (15) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_33",
+        "agentOutput": "Revenue was 900.",
+        "sources": [
+          "Revenue was 100."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Revenue was 900",
+            "sourceText": "Revenue was 100.",
+            "issue": "Numbers in claim (900) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_34",
+        "agentOutput": "Total is 150.",
+        "sources": [
+          "A is 100. B is 50."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Total is 150",
+            "sourceText": "A is 100. B is 50.",
+            "issue": "Numbers in claim (150) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_35",
+        "agentOutput": "He visited Paris and London.",
+        "sources": [
+          "He visited Paris."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_36",
+        "agentOutput": "U.S. GDP is 5%.",
+        "sources": [
+          "US GDP is 5%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "U.S. GDP is 5%",
+            "sourceText": "US GDP is 5%.",
+            "issue": "Low entity overlap (33%)"
+          }
+        ],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_37",
+        "agentOutput": "fifty percent.",
+        "sources": [
+          "50%."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "fifty percent",
+            "sourceText": "50%.",
+            "issue": "Low entity overlap (0%)"
+          }
+        ],
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_38",
+        "agentOutput": "Jan 1, 2024.",
+        "sources": [
+          "January 1st, 2024."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Jan 1, 2024",
+            "sourceText": "January 1st, 2024.",
+            "issue": "Numbers in claim (1, 2024) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_39",
+        "agentOutput": "Model-X15 cost $10.",
+        "sources": [
+          "Model X15 cost $10."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_40",
+        "agentOutput": "He said \"Hello world\".",
+        "sources": [
+          "He said Hello world."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_41",
+        "agentOutput": "A is 1; B is 2.",
+        "sources": [
+          "A is 1."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "A is 1",
+            "sourceText": "A is 1.",
+            "issue": "Low entity overlap (30%)"
+          },
+          {
+            "claim": "B is 2",
+            "sourceText": "A is 1.",
+            "issue": "Numbers in claim (2) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_42",
+        "agentOutput": "Results: A is 1.",
+        "sources": [
+          "A is 1."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Results",
+            "sourceText": "A is 1.",
+            "issue": "Low entity overlap (0%)"
+          },
+          {
+            "claim": "A is 1",
+            "sourceText": "A is 1.",
+            "issue": "Low entity overlap (30%)"
+          }
+        ],
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_43",
+        "agentOutput": "It rained heavily and the roads flooded, but we drove safely.",
+        "sources": [
+          "It rained heavily. The roads flooded."
+        ],
+        "trustScore": 0.6666666666666666,
+        "verdict": "FLAG",
+        "mismatches": [
+          {
+            "claim": "we drove safely",
+            "sourceText": "It rained heavily. The roads flooded.",
+            "issue": "Low entity overlap (0%)"
+          }
+        ],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_44",
+        "agentOutput": "The report stated: 'Growth was 5%.'",
+        "sources": [
+          "The report stated growth was 5%."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-11T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_45",
+        "agentOutput": "NASA launched.",
+        "sources": [
+          "National Aeronautics and Space Administration launched."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "NASA launched",
+            "sourceText": "National Aeronautics and Space Administration launched.",
+            "issue": "Claim not supported by sources"
+          }
+        ],
+        "timestamp": "2026-07-12T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_46",
+        "agentOutput": "1, 2, 3, 4, 5.",
+        "sources": [
+          "1, 2, 3."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "1, 2, 3, 4, 5",
+            "sourceText": "1, 2, 3.",
+            "issue": "Numbers in claim (4, 5) not found in sources"
+          }
+        ],
+        "timestamp": "2026-07-13T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_47",
+        "agentOutput": "A is 10, B is 20.",
+        "sources": [
+          "A is 20, B is 10."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-14T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_48",
+        "agentOutput": "10.0.",
+        "sources": [
+          "10."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [],
+        "timestamp": "2026-07-15T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_49",
+        "agentOutput": "End.Start.",
+        "sources": [
+          "End. Start."
+        ],
+        "trustScore": 0,
+        "verdict": "BLOCK",
+        "mismatches": [
+          {
+            "claim": "Start",
+            "sourceText": "End. Start.",
+            "issue": "Low entity overlap (30%)"
+          }
+        ],
+        "timestamp": "2026-07-16T12:00:00Z",
+        "claims": []
+      },
+      {
+        "id": "audit_test_50",
+        "agentOutput": "Summary of events.",
+        "sources": [
+          "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Summary of events."
+        ],
+        "trustScore": 1,
+        "verdict": "PASS",
+        "mismatches": [],
+        "timestamp": "2026-07-10T12:00:00Z",
+        "claims": []
       }
     ],
-    totalCount: 12,
-    dateRange: { start: '2026-07-10', end: '2026-07-17' },
+    totalCount: 50,
+    dateRange: { start: '2026-07-10', end: '2026-07-16' },
   };
 
   const isStandalone = mounted && typeof window !== 'undefined' && window.self === window.top;
@@ -339,19 +835,36 @@ export default function AuditFeed() {
       if (isReady) {
         const logRes: any = await callTool('get_audit_log', { startDate: '2026-07-10', endDate: '2026-07-17' });
         if (logRes && logRes.audits) {
-          setHistoryData(logRes.audits);
+          const normalizedAudits = logRes.audits.map((a: any) => {
+            const normalizedScore = (a.trustScore > 1 ? a.trustScore / 100 : a.trustScore) || 0;
+            return {
+              ...a,
+              trustScore: normalizedScore,
+              verdict: (() => {
+                const v = a.verdict?.trim()?.toUpperCase();
+                if (v === 'PASS' || v === 'BLOCK' || v === 'FLAG') return v as 'PASS' | 'BLOCK' | 'FLAG';
+                if (!a.claims || a.claims.length === 0) return 'BLOCK' as const;
+                return (normalizedScore >= 0.8 ? 'PASS' : normalizedScore < 0.4 ? 'BLOCK' : 'FLAG') as 'PASS' | 'BLOCK' | 'FLAG';
+              })(),
+              claims: a.claims?.map((c: any) => ({
+                ...c,
+                score: (c.score > 1 ? c.score / 100 : c.score) || 0
+              })) || []
+            };
+          });
+          setHistoryData(normalizedAudits);
         } else {
           setHistoryData(mockData.audits);
         }
-        
+
         const summaryRes: any = await callTool('get_trust_summary', {});
         if (summaryRes) {
           setStats({
-            total: summaryRes.totalAudits,
-            passRate: summaryRes.passRate,
-            avgScore: summaryRes.averageTrustScore,
-            flagCount: summaryRes.flagCount,
-            blockCount: summaryRes.blockCount,
+            total: summaryRes?.totalAudits || 0,
+            passRate: summaryRes?.passRate !== undefined ? (summaryRes.passRate <= 1 && summaryRes.passRate > 0 ? summaryRes.passRate * 100 : summaryRes.passRate) : 0,
+            avgScore: summaryRes?.averageTrustScore !== undefined ? (summaryRes.averageTrustScore > 1 ? summaryRes.averageTrustScore / 100 : summaryRes.averageTrustScore) : 0,
+            flagCount: summaryRes?.flagCount || 0,
+            blockCount: summaryRes?.blockCount || 0,
           });
         } else {
           updateStatsFromList(mockData.audits);
@@ -368,10 +881,11 @@ export default function AuditFeed() {
   };
 
   const updateStatsFromList = (list: AuditRecord[]) => {
-    const total = list.length;
-    const passCount = list.filter(a => a.verdict === 'PASS').length;
-    const flagCount = list.filter(a => a.verdict === 'FLAG').length;
-    const blockCount = list.filter(a => a.verdict === 'BLOCK').length;
+    const safeList = list || [];
+    const total = safeList.length;
+    const passCount = safeList.filter(a => a.verdict === 'PASS').length;
+    const flagCount = safeList.filter(a => a.verdict === 'FLAG').length;
+    const blockCount = safeList.filter(a => a.verdict === 'BLOCK').length;
     setStats({
       total,
       passRate: total > 0 ? (passCount / total) * 100 : 0,
@@ -386,6 +900,13 @@ export default function AuditFeed() {
       loadData();
     }
   }, [mounted, isReady]);
+
+  // Sync to localStorage whenever historyData changes
+  useEffect(() => {
+    if (mounted && historyData && historyData.length > 0) {
+      localStorage.setItem('halluno-audits', JSON.stringify(historyData));
+    }
+  }, [historyData, mounted]);
 
   // Live count-up animation for scores
   useEffect(() => {
@@ -436,15 +957,24 @@ export default function AuditFeed() {
         });
 
         if (result) {
+          const normalizedTrustScore = (result.trustScore > 1 ? result.trustScore / 100 : result.trustScore) || 0;
           const newRecord: AuditRecord = {
             id: result.auditId,
             agentOutput: agentOutputInput,
             sources: sourcesArray,
-            trustScore: result.trustScore,
-            verdict: result.verdict,
+            trustScore: normalizedTrustScore,
+            verdict: (() => {
+              const v = result.verdict?.trim()?.toUpperCase();
+              if (v === 'PASS' || v === 'BLOCK' || v === 'FLAG') return v as 'PASS' | 'BLOCK' | 'FLAG';
+              if (!result.claims || result.claims.length === 0) return 'BLOCK' as const;
+              return (normalizedTrustScore >= 0.8 ? 'PASS' : normalizedTrustScore < 0.4 ? 'BLOCK' : 'FLAG') as 'PASS' | 'BLOCK' | 'FLAG';
+            })(),
             mismatches: result.mismatches,
             timestamp: result.timestamp,
-            claims: result.claims,
+            claims: result.claims?.map((c: any) => ({
+              ...c,
+              score: (c.score > 1 ? c.score / 100 : c.score) || 0
+            })) || [],
           };
           setLiveResult(newRecord);
           // Add to local history list
@@ -468,13 +998,15 @@ export default function AuditFeed() {
         // Fallback to local verifier when running in standalone browser mode
         setTimeout(() => {
           const { score, verdict, mismatches, claimDetails } = computeTrustScore(agentOutputInput, sourcesArray);
-          
+
+          const normalizedScore = claimDetails.length === 0 ? 0 : score;
+          const finalVerdict: 'PASS' | 'BLOCK' | 'FLAG' = claimDetails.length === 0 ? 'BLOCK' : verdict;
           const newRecord: AuditRecord = {
             id: 'audit_live_' + Date.now(),
             agentOutput: agentOutputInput,
             sources: sourcesArray,
-            trustScore: score,
-            verdict: verdict,
+            trustScore: normalizedScore,
+            verdict: finalVerdict,
             mismatches: mismatches,
             timestamp: new Date().toISOString(),
             claims: claimDetails.map((c: any) => ({
@@ -486,7 +1018,7 @@ export default function AuditFeed() {
               status: c.supported ? 'supported' : (c.entityRatio > 0.5 ? 'partial' : 'unsupported')
             }))
           };
-          
+
           setLiveResult(newRecord);
           setHistoryData(prev => [newRecord, ...prev]);
           updateStatsFromList([newRecord, ...historyData]);
@@ -543,7 +1075,8 @@ export default function AuditFeed() {
       fontFamily: "'Inter', sans-serif",
       paddingBottom: '80px',
     }}>
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         /* Custom styling elements */
         html, body {
           margin: 0;
@@ -762,9 +1295,9 @@ export default function AuditFeed() {
                       borderRadius: '8px',
                       padding: '12px',
                       color: '#f0f6fc',
-                      fontSize: '13px',
+                      fontSize: '14px',
                       lineHeight: '1.5',
-                      fontFamily: "'JetBrains Mono', monospace",
+                      fontFamily: "'Inter', sans-serif",
                       resize: 'vertical',
                       outline: 'none',
                       boxSizing: 'border-box',
@@ -860,17 +1393,21 @@ export default function AuditFeed() {
                       fontWeight: 700,
                       fontSize: '14px',
                     }}>
-                      {liveResult.verdict}
+                      {getVerdictLabel(liveResult.verdict)}
                     </div>
                     <div style={{ fontSize: '13px', color: '#8b949e' }}>
-                      {liveResult.claims ? (
+                      {liveResult.claims && liveResult.claims.length > 0 ? (
                         <>
                           {liveResult.claims.filter(c => c.status === 'supported').length} supported,{' '}
                           {liveResult.claims.filter(c => c.status !== 'supported').length} unverified of{' '}
                           {liveResult.claims.length} claims
                         </>
+                      ) : liveResult.trustScore === 0 ? (
+                        <span style={{ color: '#f85149', fontWeight: 500 }}>
+                          ⚠ No verifiable claims found in input.
+                        </span>
                       ) : (
-                        `${liveResult.mismatches.length} mismatches detected`
+                        `${liveResult.mismatches?.length || 0} mismatches detected`
                       )}
                     </div>
                   </div>
@@ -1001,7 +1538,7 @@ export default function AuditFeed() {
             boxSizing: 'border-box',
           }}>
             <div style={{ fontSize: '32px', fontWeight: 700, color: '#3fb950', fontFamily: "'JetBrains Mono', monospace" }}>
-              {stats.passRate.toFixed(0)}%
+              {(stats.passRate || 0).toFixed(0)}%
             </div>
             <div style={{ fontSize: '12px', color: '#8b949e', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Pass Rate
@@ -1017,7 +1554,7 @@ export default function AuditFeed() {
             boxSizing: 'border-box',
           }}>
             <div style={{ fontSize: '32px', fontWeight: 700, color: '#f0f6fc', fontFamily: "'JetBrains Mono', monospace" }}>
-              {stats.avgScore.toFixed(2)}
+              {(stats.avgScore || 0).toFixed(2)}
             </div>
             <div style={{ fontSize: '12px', color: '#8b949e', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Avg Score
@@ -1068,7 +1605,7 @@ export default function AuditFeed() {
             Audit Log History
           </h2>
 
-          {historyData.length === 0 ? (
+          {(!historyData || historyData.length === 0) ? (
             <div style={{
               display: 'flex',
               flexDirection: 'column',
@@ -1195,7 +1732,7 @@ export default function AuditFeed() {
                       color: '#8b949e',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        {audit.mismatches.length > 0 ? (
+                        {(audit.mismatches?.length || 0) > 0 ? (
                           <span style={{ color: '#d29922', fontWeight: 500 }}>
                             ⚠️ {audit.mismatches.length} mismatch{audit.mismatches.length !== 1 ? 'es' : ''}
                           </span>
@@ -1218,7 +1755,7 @@ export default function AuditFeed() {
                         <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#8b949e', textTransform: 'uppercase' }}>
                           Claim-by-claim verification breakdown:
                         </h4>
-                        
+
                         {audit.claims && audit.claims.length > 0 ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {audit.claims.map((claim, idx) => (
