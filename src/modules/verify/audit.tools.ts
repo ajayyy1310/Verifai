@@ -49,7 +49,7 @@ function resolveSource(source: string): string {
     return 'Report B: Q3 profit margin was 12% and profit was $1.8 million.';
   }
   if (lowercase.includes('warranty')) {
-    return 'Warranty Terms: Products are covered under a 1-year limited warranty from the date of purchase. Warranty coverage includes manufacturing defects. Physical damage and misuse are not covered under warranty.';
+    return 'Warranty Terms: All products include a 1-year limited guarantee against manufacturing defects from the original purchase date. Accidental damage, water damage, and misuse are excluded from this guarantee. Customers must retain the original purchase receipt to claim the guarantee.';
   }
   if (lowercase.includes('auth') || lowercase.includes('authentication') || lowercase.includes('security_policy')) {
     return 'Security Policy: The system supports three authentication methods: password-based login, two-factor authentication (2FA) via SMS, and OAuth 2.0 single sign-on (SSO).';

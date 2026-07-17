@@ -288,7 +288,58 @@ const mockAudits: AuditRecord[] = [
       },
     ],
   },
+  {
+    id: 'audit_013',
+    agentOutput: 'Warranty coverage lasts 2 years from purchase date',
+    sources: ['Warranty Terms: All products include a 1-year limited guarantee against manufacturing defects from purchase date. Accidental damage and misuse are excluded.'],
+    trustScore: 15,
+    verdict: 'BLOCK',
+    mismatches: [
+      {
+        claim: 'Warranty coverage lasts 2 years from purchase date',
+        sourceText: 'All products include a 1-year limited guarantee against manufacturing defects from purchase date.',
+        issue: 'Incorrect warranty duration: source specifies 1 year, agent claimed 2 years',
+      },
+    ],
+    timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+    claims: [
+      {
+        claim: 'Warranty coverage lasts 2 years from purchase date',
+        bestSourceText: 'All products include a 1-year limited guarantee against manufacturing defects from purchase date.',
+        jaccard: 0.15,
+        entityOverlap: 0.5,
+        score: 0.15,
+        status: 'contradicted',
+      },
+    ],
+  },
+  {
+    id: 'audit_014',
+    agentOutput: 'The warranty covers all types of damage including physical damage',
+    sources: ['Warranty Terms: All products include a 1-year limited guarantee against manufacturing defects from purchase date. Accidental damage and misuse are excluded.'],
+    trustScore: 20,
+    verdict: 'BLOCK',
+    mismatches: [
+      {
+        claim: 'The warranty covers all types of damage including physical damage',
+        sourceText: 'Accidental damage and misuse are excluded from the warranty.',
+        issue: 'Hallucination: warranty explicitly excludes physical/accidental damage',
+      },
+    ],
+    timestamp: new Date(Date.now() - 22 * 24 * 60 * 60 * 1000).toISOString(),
+    claims: [
+      {
+        claim: 'The warranty covers all types of damage including physical damage',
+        bestSourceText: 'Accidental damage and misuse are excluded.',
+        jaccard: 0.20,
+        entityOverlap: 0.6,
+        score: 0.20,
+        status: 'contradicted',
+      },
+    ],
+  },
 ];
+
 
 export class HistoryTools {
   @Tool({
