@@ -315,8 +315,13 @@ export class HistoryTools {
 
     const startDate = new Date(input.startDate);
     const endDate = new Date(input.endDate);
+
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       throw new Error('Invalid date value. Please check the date values or provide them in ISO format (YYYY-MM-DD).');
+    }
+
+    if (startDate > endDate) {
+      throw new Error('Invalid date range. Start date must be before or equal to end date.');
     }
 
     endDate.setHours(23, 59, 59, 999);

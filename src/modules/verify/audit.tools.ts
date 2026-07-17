@@ -1,4 +1,4 @@
-import { ToolDecorator as Tool, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, ResourceDecorator as Resource, ExecutionContext, z } from '@nitrostack/core';
 import { randomUUID } from 'crypto';
 import { computeTrustScore, extractClaims } from './verifier.js';
 
@@ -28,13 +28,36 @@ interface Mismatch {
   issue: string;
 }
 
+// Map mock document reference names to their actual contents
+function resolveSource(source: string): string {
+  const lowercase = source.trim().toLowerCase();
+  
+  if (lowercase === 'return_policy_official_document') {
+    return 'Official Return Policy: Returns are accepted within 30 days of purchase with original receipt.';
+  }
+  if (lowercase === 'product_specs_datasheet') {
+    return 'Product Specifications: Model X has 16GB RAM and 512GB SSD storage.';
+  }
+  if (lowercase === 'user_manual_draft') {
+    return 'User Manual: Model X battery life is up to 10 hours under normal usage.';
+  }
+  if (lowercase === 'source_report_a') {
+    return 'Report A: Q3 revenue was $15 million.';
+  }
+  if (lowercase === 'source_report_b') {
+    return 'Report B: Q3 profit margin was 12% and profit was $1.8 million.';
+  }
+  
+  return source;
+}
+
 export class AuditTools {
   @Tool({
     name: 'audit_response',
-    description: 'Audit an AI agent response against source documents and compute a trust score',
+    description: 'Audit an AI agent response against source documents and compute a trust score. If no sources are provided, this tool returns a low-confidence audit prompting the user to supply reference documents.',
     inputSchema: z.object({
       agentOutput: z.string().describe('The AI agent output to audit'),
-      sources: z.array(z.string()).describe('Array of source documents to verify against'),
+      sources: z.array(z.string()).describe('Array of source documents or reference names to verify against'),
     }),
   })
   async audit_response(
@@ -119,7 +142,10 @@ export class AuditTools {
       };
     }
 
-    const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, input.sources);
+    // Resolve any source reference names to their actual content
+    const resolvedSources = input.sources.map(resolveSource);
+
+    const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, resolvedSources);
 
     // Convert scores/overlaps to 0-100 range for strict evaluation compliance
     const trustScore100 = Math.round(score * 100);
@@ -156,7 +182,7 @@ export class AuditTools {
 
   @Tool({
     name: 'explain_audit',
-    description: 'Get detailed factual mismatches and citations for a specific audit',
+    description: 'Get detailed factual mismatches and citations for a specific audit. If the audit ID is not found, this tool returns an error suggesting to check the ID or search the logs.',
     inputSchema: z.object({
       auditId: z.string().describe('The audit ID to explain'),
     }),
@@ -194,6 +220,88 @@ export class AuditTools {
       sources: record.sources,
       timestamp: record.timestamp,
       claims: record.claims || [],
+    };
+  }
+}
+
+export class VerifyResources {
+  @Resource({
+    uri: 'resource://return_policy_official_document',
+    name: 'Return Policy Document',
+    description: 'Official return policy guidelines',
+    mimeType: 'text/plain',
+  })
+  async getReturnPolicy(uri: string, ctx: ExecutionContext) {
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/plain',
+        text: 'Official Return Policy: Returns are accepted within 30 days of purchase with original receipt.'
+      }]
+    };
+  }
+
+  @Resource({
+    uri: 'resource://product_specs_datasheet',
+    name: 'Product Specs Datasheet',
+    description: 'Detailed specifications for Model X',
+    mimeType: 'text/plain',
+  })
+  async getProductSpecs(uri: string, ctx: ExecutionContext) {
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/plain',
+        text: 'Product Specifications: Model X has 16GB RAM and 512GB SSD storage.'
+      }]
+    };
+  }
+
+  @Resource({
+    uri: 'resource://user_manual_draft',
+    name: 'User Manual Draft',
+    description: 'Draft version of the user manual',
+    mimeType: 'text/plain',
+  })
+  async getUserManual(uri: string, ctx: ExecutionContext) {
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/plain',
+        text: 'User Manual: Model X battery life is up to 10 hours under normal usage.'
+      }]
+    };
+  }
+
+  @Resource({
+    uri: 'resource://source_report_a',
+    name: 'Source Report A',
+    description: 'Financial performance report A',
+    mimeType: 'text/plain',
+  })
+  async getReportA(uri: string, ctx: ExecutionContext) {
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/plain',
+        text: 'Report A: Q3 revenue was $15 million.'
+      }]
+    };
+  }
+
+  @Resource({
+    uri: 'resource://source_report_b',
+    name: 'Source Report B',
+    description: 'Financial performance report B',
+    mimeType: 'text/plain',
+  })
+  async getReportB(uri: string, ctx: ExecutionContext) {
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/plain',
+        text: 'Report B: Q3 profit margin was 12% and profit was $1.8 million.'
+      }]
     };
   }
 }
