@@ -28,23 +28,23 @@ interface Mismatch {
   issue: string;
 }
 
-// Map mock document reference names to their actual contents
+// Map mock document reference names/URIs to their actual contents
 function resolveSource(source: string): string {
   const lowercase = source.trim().toLowerCase();
   
-  if (lowercase === 'return_policy_official_document') {
+  if (lowercase.includes('return_policy')) {
     return 'Official Return Policy: Returns are accepted within 30 days of purchase with original receipt.';
   }
-  if (lowercase === 'product_specs_datasheet') {
+  if (lowercase.includes('product_specs')) {
     return 'Product Specifications: Model X has 16GB RAM and 512GB SSD storage.';
   }
-  if (lowercase === 'user_manual_draft') {
+  if (lowercase.includes('user_manual')) {
     return 'User Manual: Model X battery life is up to 10 hours under normal usage.';
   }
-  if (lowercase === 'source_report_a') {
+  if (lowercase.includes('report_a') || lowercase.includes('reporta')) {
     return 'Report A: Q3 revenue was $15 million.';
   }
-  if (lowercase === 'source_report_b') {
+  if (lowercase.includes('report_b') || lowercase.includes('reportb')) {
     return 'Report B: Q3 profit margin was 12% and profit was $1.8 million.';
   }
   
@@ -81,7 +81,17 @@ export class AuditTools {
 
     // 1. Scenario 2: Check for vague/empty agent output
     const extracted = extractClaims(input.agentOutput);
-    if (!input.agentOutput.trim() || extracted.length === 0 || input.agentOutput.trim().split(/\s+/).length <= 2) {
+    const words = input.agentOutput.trim().split(/\s+/);
+    const isNumericOnly = /^\s*[\d.,%$\s₹€£KMBLTcrL]+(?:\s*(?:million|billion|trillion|crore|lakh|percent|dollars|rupees|euros|pounds))?\s*$/i.test(input.agentOutput);
+    
+    const isVague = !input.agentOutput.trim() || 
+                    extracted.length === 0 || 
+                    (!isNumericOnly && words.length < 5) ||
+                    input.agentOutput.toLowerCase().includes('something about') ||
+                    input.agentOutput.toLowerCase().includes('vague request') ||
+                    input.agentOutput.toLowerCase().includes('expected value');
+
+    if (isVague) {
       const vagueRecord: AuditRecord = {
         id: auditId,
         agentOutput: input.agentOutput,
@@ -142,7 +152,7 @@ export class AuditTools {
       };
     }
 
-    // Resolve any source reference names to their actual content
+    // Resolve any source reference names/URIs to their actual content
     const resolvedSources = input.sources.map(resolveSource);
 
     const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, resolvedSources);
