@@ -240,14 +240,14 @@ export default function TrustDashboard() {
   const loadData = async () => {
     try {
       if (isReady) {
-        const logRes = await callTool('get_audit_log', { startDate: '2026-07-10', endDate: '2026-07-17' });
+        const logRes: any = await callTool('get_audit_log', { startDate: '2026-07-10', endDate: '2026-07-17' });
         if (logRes && logRes.audits) {
           setHistoryData(logRes.audits);
         } else {
           setHistoryData(mockHistoryList);
         }
 
-        const summaryRes = await callTool('get_trust_summary', {});
+        const summaryRes: any = await callTool('get_trust_summary', {});
         if (summaryRes) {
           const stats: TrustSummaryData = {
             totalAudits: summaryRes.totalAudits,
@@ -258,7 +258,7 @@ export default function TrustDashboard() {
             averageTrustScore: summaryRes.averageTrustScore,
             minTrustScore: summaryRes.minTrustScore,
             maxTrustScore: summaryRes.maxTrustScore,
-            trend: summaryRes.trend.map(t => ({
+            trend: summaryRes.trend.map((t: any) => ({
               date: formatDateShort(t.date),
               passRate: t.passRate,
               avgScore: t.avgScore,

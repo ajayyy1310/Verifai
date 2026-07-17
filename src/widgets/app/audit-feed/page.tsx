@@ -336,14 +336,14 @@ export default function AuditFeed() {
   const loadData = async () => {
     try {
       if (isReady) {
-        const logRes = await callTool('get_audit_log', { startDate: '2026-07-10', endDate: '2026-07-17' });
+        const logRes: any = await callTool('get_audit_log', { startDate: '2026-07-10', endDate: '2026-07-17' });
         if (logRes && logRes.audits) {
           setHistoryData(logRes.audits);
         } else {
           setHistoryData(mockData.audits);
         }
         
-        const summaryRes = await callTool('get_trust_summary', {});
+        const summaryRes: any = await callTool('get_trust_summary', {});
         if (summaryRes) {
           setStats({
             total: summaryRes.totalAudits,
@@ -429,7 +429,7 @@ export default function AuditFeed() {
 
     try {
       if (isReady) {
-        const result = await callTool('audit_response', {
+        const result: any = await callTool('audit_response', {
           agentOutput: agentOutputInput,
           sources: sourcesArray,
         });
