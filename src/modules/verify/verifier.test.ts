@@ -43,9 +43,9 @@ console.log('Matched numbers:', test2Result.matched);
 console.log('Claim-only numbers:', test2Result.claimOnly);
 console.log('Source-only numbers:', test2Result.sourceOnly);
 const test2Pass = test2Result.matched.length === 0 &&
-  test2Result.claimOnly.includes(500) &&
-  test2Result.claimOnly.includes(3) &&
-  test2Result.sourceOnly.includes(350);
+  test2Result.claimOnly.includes('500') &&
+  test2Result.claimOnly.includes('3') &&
+  test2Result.sourceOnly.includes('350');
 console.log('PASS:', test2Pass ? '✅' : '❌');
 
 // ============================================================================
@@ -61,7 +61,7 @@ console.log('Score:', test3Result.score);
 console.log('Verdict:', test3Result.verdict);
 console.log('Mismatches:', test3Result.mismatches);
 const test3Pass = test3Result.score >= 0.4 && test3Result.score <= 0.6 &&
-  test3Result.verdict === 'BLOCK';
+  test3Result.verdict === 'FLAG';
 console.log('PASS:', test3Pass ? '✅' : '❌');
 
 // ============================================================================

@@ -20,8 +20,14 @@ export function extractClaims(text: string): string[] {
     return [];
   }
 
+  // Protect decimal numbers
+  let processedText = text.replace(/(\d+)\.(\d+)/g, '$1_DECIMAL_$2');
+
   // Step 1: Split on sentence boundaries
-  let claims = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
+  let claims = processedText.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
+
+  // Restore decimals
+  claims = claims.map(claim => claim.replace(/_DECIMAL_/g, '.'));
 
   // Step 2: Further split on semicolons and colons
   claims = claims.flatMap(claim => claim.split(/[;:]+/).map(s => s.trim()).filter(s => s.length > 0));
@@ -66,13 +72,13 @@ function splitOnConjunctions(claim: string): string[] {
 }
 
 /**
- * Extract all numbers from text, normalized (no commas).
- * Returns array of integers.
+ * Extract all numbers from text, normalized.
+ * Returns array of complete number strings (with currency/units).
  */
-export function extractNumbers(text: string): number[] {
-  const numberRegex = /\d+(?:,\d{3})*/g;
+export function extractNumbers(text: string): string[] {
+  const numberRegex = /[₹$€£]?\s*\d+(?:,\d{3})*(?:\.\d+)?\s*(?:%|crore|million|billion|lakh|thousand)?/gi;
   const matches = text.match(numberRegex) || [];
-  return matches.map(m => parseInt(m.replace(/,/g, ''), 10));
+  return matches.map(m => m.trim());
 }
 
 /**
@@ -80,9 +86,9 @@ export function extractNumbers(text: string): number[] {
  * Returns matched numbers (exact value match), claim-only, source-only.
  */
 export type NumberComparison = {
-  matched: number[];
-  claimOnly: number[];
-  sourceOnly: number[];
+  matched: string[];
+  claimOnly: string[];
+  sourceOnly: string[];
 };
 
 /**
@@ -99,9 +105,9 @@ export function compareNumbers(claim: string, source: string): NumberComparison 
   const claimNumbers = extractNumbers(claim);
   const sourceNumbers = extractNumbers(source);
 
-  const matched: number[] = [];
-  const claimOnly: number[] = [];
-  const sourceOnly: Set<number> = new Set(sourceNumbers);
+  const matched: string[] = [];
+  const claimOnly: string[] = [];
+  const sourceOnly: Set<string> = new Set(sourceNumbers);
 
   claimNumbers.forEach(num => {
     if (sourceNumbers.includes(num)) {
@@ -163,7 +169,7 @@ export function verifyClaimAgainstSource(claim: string, sources: string[]): {
 
   let totalEntityMatches = 0;
   const allSourceEntities = new Set<string>();
-  const allSourceNumbers = new Set<number>();
+  const allSourceNumbers = new Set<string>();
 
   sources.forEach(source => {
     extractEntities(source).forEach(e => allSourceEntities.add(e));
@@ -226,7 +232,7 @@ export function verifyClaimAgainstSource(claim: string, sources: string[]): {
  */
 export function computeTrustScore(agentOutput: string, sources: string[]): {
   score: number;
-  verdict: 'PASS' | 'BLOCK';
+  verdict: 'PASS' | 'BLOCK' | 'FLAG';
   mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
   claimDetails: Array<{
     claim: string;
@@ -276,9 +282,19 @@ export function computeTrustScore(agentOutput: string, sources: string[]): {
     }
   });
 
+  const unsupportedCount = claims.length - supportedCount;
+
   // Calculate score: percentage of supported claims
   const score = claims.length > 0 ? supportedCount / claims.length : 0.0;
-  const verdict = score >= 0.7 ? 'PASS' : 'BLOCK';
+  
+  let verdict: 'PASS' | 'BLOCK' | 'FLAG';
+  if (score > 0.8 && unsupportedCount === 0) {
+    verdict = 'PASS';
+  } else if (score < 0.4) {
+    verdict = 'BLOCK';
+  } else {
+    verdict = 'FLAG';
+  }
 
   return {
     score,

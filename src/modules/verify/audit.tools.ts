@@ -37,7 +37,7 @@ export class AuditTools {
   ): Promise<{
     auditId: string;
     trustScore: number;
-    verdict: 'PASS' | 'BLOCK';
+    verdict: 'PASS' | 'BLOCK' | 'FLAG';
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     timestamp: string;
   }> {
@@ -80,7 +80,7 @@ export class AuditTools {
     auditId: string;
     agentOutput: string;
     trustScore: number;
-    verdict: 'PASS' | 'BLOCK';
+    verdict: 'PASS' | 'BLOCK' | 'FLAG';
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     sources: string[];
     timestamp: string;
