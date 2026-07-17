@@ -120,15 +120,12 @@ export function compareNumbers(claim: string, source: string): NumberComparison 
   return result;
 }
 
-/**
- * Extract named entities (company names, locations, people) from text.
- * Simple heuristic: capitalized words and multi-word phrases.
- */
 export function extractEntities(text: string): string[] {
-  // Match capitalized words and multi-word capitalized phrases
-  const entityRegex = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g;
+  const entityRegex = /\b[A-Z][a-zA-Z]*\b/g;
   const matches = text.match(entityRegex) || [];
-  return [...new Set(matches)]; // Deduplicate
+  const stopwords = new Set(['The', 'A', 'An', 'In', 'On', 'At', 'By', 'For', 'To', 'With', 'And', 'Or', 'But', 'Is', 'Are', 'Was', 'Were', 'It', 'This', 'That', 'He', 'She', 'They', 'We']);
+  const filtered = matches.filter(m => !stopwords.has(m));
+  return [...new Set(filtered)];
 }
 
 /**
@@ -150,38 +147,48 @@ export function verifyClaimAgainstSource(claim: string, sources: string[]): {
   const claimNumbers = extractNumbers(claim);
 
   let totalEntityMatches = 0;
-  let totalSourceEntities = 0;
-  let numberMatch = true;
   const allSourceEntities = new Set<string>();
-  let numberComparison: NumberComparison = { matched: [], claimOnly: [], sourceOnly: [] };
+  const allSourceNumbers = new Set<number>();
 
   sources.forEach(source => {
-    const sourceEntities = extractEntities(source);
-    sourceEntities.forEach(e => allSourceEntities.add(e));
-    totalSourceEntities += sourceEntities.length;
+    extractEntities(source).forEach(e => allSourceEntities.add(e));
+    extractNumbers(source).forEach(n => allSourceNumbers.add(n));
+  });
 
-    // Count entity matches
-    claimEntities.forEach(entity => {
-      if (sourceEntities.some(se => se.toLowerCase() === entity.toLowerCase())) {
-        totalEntityMatches++;
-      }
-    });
+  const sourceEntitiesArr = Array.from(allSourceEntities);
+  const sourceNumbersArr = Array.from(allSourceNumbers);
 
-    // Check number matches
-    const numComparison = compareNumbers(claim, source);
-    numberComparison = numComparison;
-
-    // If claim has numbers but none match, flag as potential hallucination
-    if (claimNumbers.length > 0 && numComparison.matched.length === 0) {
-      numberMatch = false;
+  // Count entity matches against union of all source entities
+  claimEntities.forEach(entity => {
+    if (sourceEntitiesArr.some(se => se.toLowerCase() === entity.toLowerCase())) {
+      totalEntityMatches++;
     }
   });
 
+  // Check number matches against union of all source numbers
+  const matchedNumbers = claimNumbers.filter(num => sourceNumbersArr.includes(num));
+  const claimOnlyNumbers = claimNumbers.filter(num => !sourceNumbersArr.includes(num));
+  const numberComparison: NumberComparison = {
+    matched: matchedNumbers,
+    claimOnly: claimOnlyNumbers,
+    sourceOnly: sourceNumbersArr.filter(num => !claimNumbers.includes(num))
+  };
+
+  let numberMatch = true;
+  if (claimNumbers.length > 0 && claimOnlyNumbers.length > 0) {
+    numberMatch = false; // Claim has numbers that are not supported by any source
+  }
+
   // Entity ratio: matched entities / claim entities
-  const entityRatio = claimEntities.length > 0 ? totalEntityMatches / claimEntities.length : 0.5;
+  let entityRatio = claimEntities.length > 0 ? totalEntityMatches / claimEntities.length : 0.5;
+
+  const meaningfulTokens = claimEntities.length + claimNumbers.length;
+  if (meaningfulTokens < 2) {
+    entityRatio = Math.min(entityRatio, 0.3);
+  }
 
   // Supported if: entity ratio > 0.5 AND (no numbers in claim OR numbers match)
-  const supported = entityRatio > 0.5 && numberMatch;
+  const supported = entityRatio > 0.5 && numberMatch && meaningfulTokens >= 2;
 
   return {
     supported,
