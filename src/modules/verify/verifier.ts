@@ -121,10 +121,25 @@ export function compareNumbers(claim: string, source: string): NumberComparison 
 }
 
 export function extractEntities(text: string): string[] {
-  const entityRegex = /\b[A-Z][a-zA-Z]*\b/g;
-  const matches = text.match(entityRegex) || [];
-  const stopwords = new Set(['The', 'A', 'An', 'In', 'On', 'At', 'By', 'For', 'To', 'With', 'And', 'Or', 'But', 'Is', 'Are', 'Was', 'Were', 'It', 'This', 'That', 'He', 'She', 'They', 'We']);
-  const filtered = matches.filter(m => !stopwords.has(m));
+  // Replace hyphens and en-dashes with spaces BEFORE matching
+  let normalizedText = text.replace(/-/g, ' ').replace(/–/g, ' ');
+  
+  // Match any word (case-insensitive) to capture all meaningful tokens
+  const entityRegex = /\b[a-zA-Z]+\b/g;
+  const matches = normalizedText.match(entityRegex) || [];
+  
+  const stopwords = new Set([
+    'the', 'a', 'an', 'in', 'on', 'at', 'by', 'for', 'to', 'with', 'and', 'or', 'but',
+    'is', 'are', 'was', 'were', 'it', 'this', 'that', 'he', 'she', 'they', 'we', 'of',
+    'as', 'from', 'be', 'has', 'have', 'had', 'not', 'no', 'which', 'who', 'whom',
+    'whose', 'will', 'would', 'can', 'could', 'should', 'shall', 'may', 'might', 'must',
+    'do', 'does', 'did', 'done', 'doing', 'its', 'their', 'our', 'my', 'your', 'his', 'her',
+    'been', 'being', 'am', 'into', 'onto', 'upon', 'about', 'above', 'below', 'under',
+    'over', 'through', 'after', 'before', 'between', 'among', 'during', 'until', 'since',
+    'without', 'within', 'along', 'across', 'behind', 'beyond', 'up', 'down', 'out', 'off'
+  ]);
+  
+  const filtered = matches.filter(m => !stopwords.has(m.toLowerCase()));
   return [...new Set(filtered)];
 }
 
