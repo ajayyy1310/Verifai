@@ -119,13 +119,47 @@ NEVER ask for clarification before calling this tool. Pass whatever the user pro
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
 
-    // Scenario 2: Check for vague/empty agent output
+    // Check for truly empty/null agent output
+    const isEmpty = !input.agentOutput || !input.agentOutput.trim() || input.agentOutput.trim() === '""' || input.agentOutput.trim() === "''";
+
+    if (isEmpty) {
+      const emptyOutputRecord: AuditRecord = {
+        id: auditId,
+        agentOutput: input.agentOutput,
+        sources: input.sources,
+        trustScore: 0,
+        verdict: 'BLOCK',
+        mismatches: [
+          {
+            claim: 'Empty Agent Output',
+            sourceText: 'No agent response provided.',
+            issue: `Cannot audit an empty or null agent response. The agentOutput field is empty or contains no meaningful content.\n\nTo proceed, please provide:\n1. The AI agent output — the actual text or statement you want to audit (e.g., "The return window is 45 days")\n2. Source documents — the reference documents to verify the statement against\n\nTrust score is undefined until a valid agent response is provided.`,
+          }
+        ],
+        timestamp,
+        sourceConflict: undefined,
+        claims: [],
+      };
+
+      auditStore.set(auditId, emptyOutputRecord);
+
+      return {
+        auditId,
+        trustScore: 0,
+        verdict: 'BLOCK',
+        mismatches: emptyOutputRecord.mismatches,
+        timestamp,
+        sourceConflict: undefined,
+        claims: [],
+      };
+    }
+
+    // Check for vague/context-free agent output
     const extracted = extractClaims(input.agentOutput);
     const words = input.agentOutput.trim().split(/\s+/);
     const isNumericOnly = /^\s*[\d.,%$\s₹€£KMBLTcrL]+(?:\s*(?:million|billion|trillion|crore|lakh|percent|dollars|rupees|euros|pounds))?\s*$/i.test(input.agentOutput);
     
-    const isVague = !input.agentOutput.trim() || 
-                    extracted.length === 0 || 
+    const isVague = extracted.length === 0 || 
                     (!isNumericOnly && words.length < 5) ||
                     input.agentOutput.toLowerCase().includes('something about') ||
                     input.agentOutput.toLowerCase().includes('vague request') ||
@@ -162,6 +196,7 @@ NEVER ask for clarification before calling this tool. Pass whatever the user pro
         claims: [],
       };
     }
+
 
     // Scenario 1: Check for empty sources list
     if (!input.sources || input.sources.length === 0 || (input.sources.length === 1 && !input.sources[0].trim())) {
