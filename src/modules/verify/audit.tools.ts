@@ -48,6 +48,15 @@ function resolveSource(source: string): string {
   if (lowercase.includes('report_b') || lowercase.includes('reportb')) {
     return 'Report B: Q3 profit margin was 12% and profit was $1.8 million.';
   }
+  if (lowercase.includes('warranty')) {
+    return 'Warranty Terms: Products are covered under a 1-year limited warranty from the date of purchase. Warranty coverage includes manufacturing defects. Physical damage and misuse are not covered under warranty.';
+  }
+  if (lowercase.includes('auth') || lowercase.includes('authentication') || lowercase.includes('security_policy')) {
+    return 'Security Policy: The system supports three authentication methods: password-based login, two-factor authentication (2FA) via SMS, and OAuth 2.0 single sign-on (SSO).';
+  }
+  if (lowercase.includes('vacation') || lowercase.includes('leave_policy') || lowercase.includes('hr_policy')) {
+    return 'HR Policy: Full-time employees are entitled to 15 days of paid vacation per year. Vacation days do not carry over to the next year.';
+  }
   
   return source;
 }
@@ -160,7 +169,7 @@ NEVER ask for clarification before calling this tool. Pass whatever the user pro
     const isNumericOnly = /^\s*[\d.,%$\s₹€£KMBLTcrL]+(?:\s*(?:million|billion|trillion|crore|lakh|percent|dollars|rupees|euros|pounds))?\s*$/i.test(input.agentOutput);
     
     const isVague = extracted.length === 0 || 
-                    (!isNumericOnly && words.length < 5) ||
+                    (!isNumericOnly && words.length < 2) ||
                     input.agentOutput.toLowerCase().includes('something about') ||
                     input.agentOutput.toLowerCase().includes('vague request') ||
                     input.agentOutput.toLowerCase().includes('expected value');
