@@ -308,17 +308,29 @@ export class HistoryTools {
     totalCount: number;
     dateRange: { start: string; end: string };
   }> {
-    const isoRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!isoRegex.test(input.startDate) || !isoRegex.test(input.endDate)) {
-      throw new Error('Invalid date format. Please provide dates in ISO format (YYYY-MM-DD).');
-    }
+    const parseAndValidateDate = (dateStr: string, paramName: string): Date => {
+      const match = dateStr.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) {
+        throw new Error(`Invalid date format for ${paramName}. Please provide dates in ISO format (YYYY-MM-DD).`);
+      }
+      
+      const year = parseInt(match[1]);
+      const month = parseInt(match[2]);
+      const day = parseInt(match[3]);
+      
+      if (month < 1 || month > 12 || day < 1 || day > 31) {
+        throw new Error(`I notice the ${paramName} you provided (${dateStr}) is invalid — it has an impossible month (${month}) and day (${day}).\n\nCould you clarify the date range you'd like? Please provide both dates in ISO format (YYYY-MM-DD), for example:\n\n• 2024-01-15 to 2024-01-01 (going backward)\n• 2024-01-01 to 2024-12-31 (full year 2024)\n• Or any other valid date range you have in mind\n\nOnce you confirm the correct dates, I'll fetch the audit log for you.`);
+      }
+      
+      const date = new Date(year, month - 1, day);
+      if (isNaN(date.getTime())) {
+        throw new Error(`Invalid date value for ${paramName}: (${dateStr}).`);
+      }
+      return date;
+    };
 
-    const startDate = new Date(input.startDate);
-    const endDate = new Date(input.endDate);
-
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      throw new Error('Invalid date value. Please check the date values or provide them in ISO format (YYYY-MM-DD).');
-    }
+    const startDate = parseAndValidateDate(input.startDate, 'start date');
+    const endDate = parseAndValidateDate(input.endDate, 'end date');
 
     if (startDate > endDate) {
       throw new Error('Invalid date range. Start date must be before or equal to end date.');
