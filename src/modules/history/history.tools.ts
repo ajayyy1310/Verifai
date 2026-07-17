@@ -293,7 +293,12 @@ const mockAudits: AuditRecord[] = [
 export class HistoryTools {
   @Tool({
     name: 'get_audit_log',
-    description: 'Retrieve audit history records filtered by a date range. ALWAYS call this tool when the user requests audit history, even if the dates appear invalid — the tool performs all date validation internally and returns appropriate error messages for invalid, impossible, or illogical date ranges (e.g. impossible month/day values, or end date before start date). Do not pre-validate or answer conversationally; always pass the user-supplied dates directly to this tool.',
+    description: `Retrieve audit history records filtered by a date range.
+CRITICAL: ALWAYS call this tool IMMEDIATELY when the user requests audit history, logs, records, or mentions "last month", "past week", "yesterday", or any date range. Pass the user-supplied dates directly to this tool even if they appear invalid — the tool performs ALL date validation internally and returns appropriate error messages for:
+- Invalid format (non-ISO)
+- Impossible values (month > 12, day > 31)
+- Illogical ranges (end date before start date)
+NEVER pre-validate dates or answer conversationally. Always pass dates directly to this tool.`,
     inputSchema: z.object({
       startDate: z.string().describe('Start date supplied by the user (YYYY-MM-DD). Pass as-is; the tool validates it.'),
       endDate: z.string().describe('End date supplied by the user (YYYY-MM-DD). Pass as-is; the tool validates it.'),

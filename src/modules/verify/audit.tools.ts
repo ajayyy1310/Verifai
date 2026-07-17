@@ -1,6 +1,6 @@
 import { ToolDecorator as Tool, ResourceDecorator as Resource, ExecutionContext, z } from '@nitrostack/core';
 import { randomUUID } from 'crypto';
-import { computeTrustScore, extractClaims } from './verifier.js';
+import { computeTrustScore, extractClaims, extractNumbers, normalizeNumber } from './verifier.js';
 
 // In-memory audit store
 const auditStore: Map<string, AuditRecord> = new Map();
@@ -14,6 +14,7 @@ interface AuditRecord {
   mismatches: Mismatch[];
   timestamp: string;
   imageUrl?: string;
+  sourceConflict?: string;
   claims?: Array<{
     claim: string;
     status: 'supported' | 'partial' | 'unsupported';
@@ -51,13 +52,51 @@ function resolveSource(source: string): string {
   return source;
 }
 
+// Detect conflicting numbers across multiple source documents
+function detectSourceConflicts(sources: string[]): string | null {
+  if (sources.length < 2) return null;
+
+  // Collect all numbers from each source and check for contradictions
+  const conflicts: string[] = [];
+  
+  for (let i = 0; i < sources.length; i++) {
+    for (let j = i + 1; j < sources.length; j++) {
+      const numsA = extractNumbers(sources[i]).map(normalizeNumber);
+      const numsB = extractNumbers(sources[j]).map(normalizeNumber);
+
+      const onlyInA = numsA.filter(n => !numsB.includes(n));
+      const onlyInB = numsB.filter(n => !numsA.includes(n));
+
+      if (onlyInA.length > 0 && onlyInB.length > 0) {
+        conflicts.push(
+          `Source ${i + 1} contains values [${onlyInA.join(', ')}] not found in Source ${j + 1} [${onlyInB.join(', ')}].`
+        );
+      }
+    }
+  }
+
+  if (conflicts.length > 0) {
+    return `⚠️ Source Conflict Detected: Your source documents contain contradictory information. ${conflicts.join(' ')} ` +
+      `The agent response may align with one source but not another. ` +
+      `Recommendation: Clarify which source document is authoritative before relying on this audit result.`;
+  }
+
+  return null;
+}
+
 export class AuditTools {
   @Tool({
     name: 'audit_response',
-    description: 'Audit an AI agent response against source documents and compute a trust score (0–100). ALWAYS call this tool when the user asks to audit, verify, check, or fact-check a statement or AI response. The tool handles all validation internally: if no sources are provided it explains what is needed; if the input is vague it requests clarification. Do not answer conversationally; always pass the agentOutput and sources directly to this tool.',
+    description: `Audit an AI agent response against source documents and compute a trust score (0–100).
+CRITICAL: ALWAYS call this tool IMMEDIATELY whenever the user asks to audit, verify, check, or fact-check ANY statement or AI response, even if:
+- The input appears vague or incomplete (e.g. "something about our policy")
+- No sources are provided (the tool will explain what is needed)
+- The agent output is empty (the tool will handle it)
+- The request seems ambiguous
+NEVER ask for clarification before calling this tool. Pass whatever the user provides as agentOutput and sources. The tool handles ALL validation internally and returns structured error messages explaining what additional information is needed.`,
     inputSchema: z.object({
-      agentOutput: z.string().describe('The AI agent output or statement to audit'),
-      sources: z.array(z.string()).describe('Array of source documents or reference names to verify against'),
+      agentOutput: z.string().describe('The AI agent output or statement to audit. Pass as-is, even if empty or vague.'),
+      sources: z.array(z.string()).describe('Source documents or reference names. Pass empty array [] if none provided; the tool will explain what is needed.'),
     }),
   })
   async audit_response(
@@ -69,6 +108,7 @@ export class AuditTools {
     verdict: 'PASS' | 'BLOCK' | 'FLAG';
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     timestamp: string;
+    sourceConflict: string | undefined;
     claims: Array<{
       claim: string;
       status: 'supported' | 'partial' | 'unsupported';
@@ -79,7 +119,7 @@ export class AuditTools {
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
 
-    // 1. Scenario 2: Check for vague/empty agent output
+    // Scenario 2: Check for vague/empty agent output
     const extracted = extractClaims(input.agentOutput);
     const words = input.agentOutput.trim().split(/\s+/);
     const isNumericOnly = /^\s*[\d.,%$\s₹€£KMBLTcrL]+(?:\s*(?:million|billion|trillion|crore|lakh|percent|dollars|rupees|euros|pounds))?\s*$/i.test(input.agentOutput);
@@ -106,6 +146,7 @@ export class AuditTools {
           }
         ],
         timestamp,
+        sourceConflict: undefined,
         claims: [],
       };
 
@@ -117,11 +158,12 @@ export class AuditTools {
         verdict: 'BLOCK',
         mismatches: vagueRecord.mismatches,
         timestamp,
+        sourceConflict: undefined,
         claims: [],
       };
     }
 
-    // 2. Scenario 1: Check for empty sources list
+    // Scenario 1: Check for empty sources list
     if (!input.sources || input.sources.length === 0 || (input.sources.length === 1 && !input.sources[0].trim())) {
       const emptyRecord: AuditRecord = {
         id: auditId,
@@ -137,6 +179,7 @@ export class AuditTools {
           }
         ],
         timestamp,
+        sourceConflict: undefined,
         claims: [],
       };
 
@@ -148,6 +191,7 @@ export class AuditTools {
         verdict: 'BLOCK',
         mismatches: emptyRecord.mismatches,
         timestamp,
+        sourceConflict: undefined,
         claims: [],
       };
     }
@@ -155,9 +199,12 @@ export class AuditTools {
     // Resolve any source reference names/URIs to their actual content
     const resolvedSources = input.sources.map(resolveSource);
 
+    // Detect conflicts between the provided source documents
+    const sourceConflict = detectSourceConflicts(resolvedSources);
+
     const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, resolvedSources);
 
-    // Convert scores/overlaps to 0-100 range for strict evaluation compliance
+    // Convert scores/overlaps to 0-100 range
     const trustScore100 = Math.round(score * 100);
 
     const claims = claimDetails.map(c => ({
@@ -167,14 +214,20 @@ export class AuditTools {
       entityOverlap: Math.round(c.entityRatio * 100),
     }));
 
+    // If there's a source conflict, add it as an informational mismatch
+    const allMismatches = sourceConflict
+      ? [{ claim: 'Source Document Conflict', sourceText: resolvedSources.join(' | '), issue: sourceConflict }, ...mismatches]
+      : mismatches;
+
     const record: AuditRecord = {
       id: auditId,
       agentOutput: input.agentOutput,
       sources: input.sources,
       trustScore: trustScore100,
-      verdict,
-      mismatches,
+      verdict: sourceConflict && verdict === 'PASS' ? 'FLAG' : verdict,
+      mismatches: allMismatches,
       timestamp,
+      sourceConflict: sourceConflict ?? undefined,
       claims,
     };
 
@@ -183,16 +236,19 @@ export class AuditTools {
     return {
       auditId,
       trustScore: trustScore100,
-      verdict,
-      mismatches,
+      verdict: record.verdict,
+      mismatches: allMismatches,
       timestamp,
+      sourceConflict: sourceConflict ?? undefined,
       claims,
     };
   }
 
   @Tool({
     name: 'explain_audit',
-    description: 'Get detailed factual mismatches and citations for a previously completed audit by its ID. ALWAYS call this tool when the user asks to explain, detail, or follow up on an audit. If the audit ID is not found in the session, the tool returns a helpful error message.',
+    description: `Get detailed factual mismatches and citations for a previously completed audit by its ID.
+CRITICAL: ALWAYS call this tool IMMEDIATELY when the user asks to explain, detail, review mismatches, or follow up on an audit result. Pass the auditId returned by audit_response directly to this tool.
+If the audit ID is not found in the current session, the tool returns a helpful error message.`,
     inputSchema: z.object({
       auditId: z.string().describe('The audit ID returned by audit_response to explain'),
     }),
@@ -208,6 +264,7 @@ export class AuditTools {
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     sources: string[];
     timestamp: string;
+    sourceConflict: string | undefined;
     claims: Array<{
       claim: string;
       status: 'supported' | 'partial' | 'unsupported';
@@ -229,6 +286,7 @@ export class AuditTools {
       mismatches: record.mismatches,
       sources: record.sources,
       timestamp: record.timestamp,
+      sourceConflict: record.sourceConflict ?? undefined,
       claims: record.claims || [],
     };
   }
