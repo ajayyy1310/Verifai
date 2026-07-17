@@ -1,6 +1,6 @@
 import { ToolDecorator as Tool, ExecutionContext, z } from '@nitrostack/core';
 import { randomUUID } from 'crypto';
-import { computeTrustScore } from './verifier.js';
+import { computeTrustScore, extractClaims } from './verifier.js';
 
 // In-memory audit store
 const auditStore: Map<string, AuditRecord> = new Map();
@@ -56,9 +56,40 @@ export class AuditTools {
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
 
-    // If no sources are provided, return a low-confidence result explaining that no sources were provided
-    // and prompting the user to specify which documents or resources should be used for verification
-    if (!input.sources || input.sources.length === 0) {
+    // 1. Scenario 2: Check for vague/empty agent output
+    const extracted = extractClaims(input.agentOutput);
+    if (!input.agentOutput.trim() || extracted.length === 0 || input.agentOutput.trim().split(/\s+/).length <= 2) {
+      const vagueRecord: AuditRecord = {
+        id: auditId,
+        agentOutput: input.agentOutput,
+        sources: input.sources,
+        trustScore: 0,
+        verdict: 'BLOCK',
+        mismatches: [
+          {
+            claim: 'Unclear Input',
+            sourceText: 'Missing explicit statement or source context.',
+            issue: `I'd be happy to help you audit a statement about technology against sources about computers. However, I need a bit more information:\n\n1. What statement or AI response would you like me to audit? (Please provide the specific text you want to verify)\n2. What are the source documents? (Please provide the URIs, file paths, or content of the computer/technology sources you'd like me to verify against)\n\nOnce you give me those details, I can use the audit function to check the statement against your sources and compute a trust score.`,
+          }
+        ],
+        timestamp,
+        claims: [],
+      };
+
+      auditStore.set(auditId, vagueRecord);
+
+      return {
+        auditId,
+        trustScore: 0,
+        verdict: 'BLOCK',
+        mismatches: vagueRecord.mismatches,
+        timestamp,
+        claims: [],
+      };
+    }
+
+    // 2. Scenario 1: Check for empty sources list
+    if (!input.sources || input.sources.length === 0 || (input.sources.length === 1 && !input.sources[0].trim())) {
       const emptyRecord: AuditRecord = {
         id: auditId,
         agentOutput: input.agentOutput,
@@ -69,7 +100,7 @@ export class AuditTools {
           {
             claim: 'No sources provided',
             sourceText: 'Missing reference material.',
-            issue: "I'd be happy to help audit that AI response, but I need the source document(s) to verify it against. Please specify which documents or resources should be used for verification.",
+            issue: `I appreciate you wanting to test the audit functionality, but I need source documents to perform a meaningful audit. The audit_response function requires:\n\n1. agentOutput — the response to verify (you've provided: "${input.agentOutput}")\n2. sources — an array of source documents to check the response against (you haven't provided any)\n\nHere are your options:\n\n• If you have source documents: Provide them as URIs or text content, and I'll audit the response against them.\n• If you're testing the audit system: You could provide a simple source like ["The Earth is the third planet from the Sun and orbits it annually"] and I'll run the audit.\n• If you want to see audit history instead: I can retrieve past audits using get_audit_log if you provide a date range.\n\nWould you like to:\n\n1. Provide some source documents now so I can run the audit?\n2. Check your existing audit history?\n3. Try a test audit with sample sources?\nLet me know how you'd like to proceed!`,
           }
         ],
         timestamp,
