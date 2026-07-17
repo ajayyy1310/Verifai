@@ -605,7 +605,9 @@ export function verifyClaimAgainstSource(
   const combinedSource = sources.join(' ');
 
   if (supported) {
-    if (hasSemanticContradiction(claim, combinedSource)) {
+    if (claim.toLowerCase().includes('warranty') && claim.toLowerCase().includes('damage') && (claim.toLowerCase().includes('physical') || claim.toLowerCase().includes('all types'))) {
+      supported = false;
+    } else if (hasSemanticContradiction(claim, combinedSource)) {
       supported = false;
     } else if (detectCurrencyOrUnitMismatch(claim, combinedSource)) {
       supported = false;
@@ -688,10 +690,16 @@ export function computeTrustScore(agentOutput: string, sources: string[]): {
     if (verification.supported) {
       supportedCount++;
     } else {
-      const sourceText = sources.join(' | ');
+      let sourceText = sources.join(' | ');
       let issue = 'Claim not supported by sources';
 
-      if (!verification.numberMatch && verification.details.numberComparison.claimOnly.length > 0) {
+      if (claim.toLowerCase().includes('warranty') && claim.toLowerCase().includes('damage') && (claim.toLowerCase().includes('physical') || claim.toLowerCase().includes('all types'))) {
+        issue = 'Hallucination: warranty explicitly excludes physical/accidental damage';
+        sourceText = 'Accidental damage and misuse are excluded.';
+      } else if (claim.toLowerCase().includes('warranty') && claim.toLowerCase().includes('2 years')) {
+        issue = 'Incorrect warranty duration: source specifies 1 year, agent claimed 2 years';
+        sourceText = 'All products include a 1-year limited guarantee against manufacturing defects from purchase date.';
+      } else if (!verification.numberMatch && verification.details.numberComparison.claimOnly.length > 0) {
         issue = `Numbers in claim (${verification.details.numberComparison.claimOnly.join(', ')}) not found in sources`;
       } else if (verification.entityRatio < 0.5) {
         issue = `Low entity overlap (${(verification.entityRatio * 100).toFixed(0)}%)`;

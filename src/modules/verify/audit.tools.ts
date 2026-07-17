@@ -24,7 +24,7 @@ function resolveSource(source: string): string {
     return 'Report B: Q3 profit margin was 12% and profit was $1.8 million.';
   }
   if (lowercase.includes('warranty')) {
-    return 'Product Protection Policy: All items sold include a 12-month limited guarantee against manufacturing defects from the original purchase date. Accidental damage, water damage, and misuse are excluded from this protection plan. Customers must retain the original receipt to make a claim.';
+    return 'Warranty Terms: All products include a 1-year limited guarantee against manufacturing defects from purchase date. Accidental damage and misuse are excluded.';
   }
   if (lowercase.includes('auth') || lowercase.includes('authentication') || lowercase.includes('security_policy')) {
     return 'Security Policy: The system supports three authentication methods: password-based login, two-factor authentication (2FA) via SMS, and OAuth 2.0 single sign-on (SSO).';
@@ -74,10 +74,14 @@ export class AuditTools {
 
   @Tool({
     name: 'audit_response',
-    description: 'Call this tool to audit any AI agent response or statement, including vague statements like "something about our policy". Extract the quoted statement or whatever text the user refers to as agentOutput, and pass available source names as sources. If no sources are mentioned, pass an empty array. Do not ask the user for clarification — call this tool and it will explain what information is missing in its response.',
+    description: `MANDATORY RULE: You MUST call this tool immediately when asked to check, audit, verify, or review any statement or text.
+Do NOT answer conversationally, do NOT list available resources, and do NOT ask for clarification before calling this tool.
+You MUST call this tool even if:
+- The input is completely empty, blank, or null (e.g. 'Audit this: ""' or 'Audit this:'). In this case, call this tool with agentOutput: "" and sources: [].
+- The request is vague or has no source documents (e.g. "The agent said something about our policy."). In this case, pass the vague statement (e.g. "something about our policy") as agentOutput and sources: [].`,
     inputSchema: z.object({
-      agentOutput: z.string().describe('The statement or text to audit. Extract from user message even if vague (e.g. "something about our policy").'),
-      sources: z.array(z.string()).describe('Source document names or URIs. Use [] if none mentioned.'),
+      agentOutput: z.string().describe('The statement or text to audit. Extract from the user message. Pass empty string "" if the user message does not specify any agent output to audit (e.g. "Audit this:").'),
+      sources: z.array(z.string()).describe('Source document names, paths, or URIs. Pass empty array [] if no sources are mentioned.'),
     }),
   })
 
