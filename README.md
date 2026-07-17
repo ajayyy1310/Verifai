@@ -7,7 +7,8 @@ Verifai is a Model Context Protocol (MCP) server that detects and scores AI-gene
 ## Features
 
 - **Hallucination Detection** — Compare AI agent outputs against source material
-- **Trust Scoring** — Deterministic 0.0–1.0 trust scores with PASS/BLOCK verdicts
+- **Trust Scoring** — Deterministic 0.0–1.0 trust scores with PASS, FLAG, and BLOCK verdicts
+- **Context-Aware Matching** — Advanced verification engine that enforces contextual entity overlap to prevent false positive number hallucination matches
 - **Audit Logging** — Track all audits with timestamps, verdicts, and detailed mismatches
 - **Trust Dashboard** — Aggregate statistics: pass rate, average score, trend analysis
 - **Source Citation** — Detailed factual issue reports with source references
@@ -17,14 +18,14 @@ Verifai is a Model Context Protocol (MCP) server that detects and scores AI-gene
 ### Modules
 
 - **`verify`** — Core hallucination detection
+  - `verifier.ts` — Engine handling sentence fragmentation, number normalization, abbreviation protection, and context-aware extraction
+  - `scorer.ts` — Threshold logic for `PASS` (>0.8 & 0 unsupported), `FLAG` (>=0.4), and `BLOCK` (<0.4)
   - `audit_response` — Score agent output against sources
   - `explain_audit` — Detailed mismatch analysis with citations
-  
+
 - **`history`** — Audit tracking & analytics
   - `get_audit_log` — Retrieve audits by date range with claims analysis
   - `get_trust_summary` — Aggregate trust metrics & trends
-  
-- **`calculator`** — Scoring logic helper
 
 ### Tools
 
