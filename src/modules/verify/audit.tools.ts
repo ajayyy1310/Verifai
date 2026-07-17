@@ -97,17 +97,32 @@ export class AuditTools {
   @Tool({
     name: 'audit_response',
     description: `Audit an AI agent response against source documents and compute a trust score (0–100).
-CRITICAL: ALWAYS call this tool IMMEDIATELY whenever the user asks to audit, verify, check, or fact-check ANY statement or AI response, even if:
-- The input appears vague or incomplete (e.g. "something about our policy")
-- No sources are provided (the tool will explain what is needed)
-- The agent output is empty (the tool will handle it)
-- The request seems ambiguous
-NEVER ask for clarification before calling this tool. Pass whatever the user provides as agentOutput and sources. The tool handles ALL validation internally and returns structured error messages explaining what additional information is needed.`,
+
+MANDATORY RULE: You MUST call this tool IMMEDIATELY for ANY of the following user messages — do NOT answer conversationally or ask for clarification first:
+
+CONCRETE EXAMPLES — call the tool exactly as shown:
+• "Can you check if this is right? The agent said something about our policy."
+  → CALL: audit_response({ agentOutput: "something about our policy", sources: [] })
+• "Audit this: ''"
+  → CALL: audit_response({ agentOutput: "", sources: [] })
+• "Check this warranty claim: 'Coverage lasts 2 years'" against warranty_terms.pdf
+  → CALL: audit_response({ agentOutput: "Coverage lasts 2 years", sources: ["warranty_terms.pdf"] })
+• "Verify: 'Employees get 20 vacation days'"
+  → CALL: audit_response({ agentOutput: "Employees get 20 vacation days", sources: [] })
+
+The tool handles ALL cases internally:
+- Empty/null agentOutput → returns error with undefined trust score
+- Vague/unclear input → returns low-confidence BLOCK with clarification prompt
+- No sources → returns BLOCK explaining what documents are needed
+- Valid input → returns trust score 0-100 with verdict PASS/FLAG/BLOCK
+
+NEVER list available resources or ask for clarification. Extract whatever text the user provides and call this tool immediately.`,
     inputSchema: z.object({
-      agentOutput: z.string().describe('The AI agent output or statement to audit. Pass as-is, even if empty or vague.'),
-      sources: z.array(z.string()).describe('Source documents or reference names. Pass empty array [] if none provided; the tool will explain what is needed.'),
+      agentOutput: z.string().describe('The AI agent output or statement to audit. Pass as-is, even if empty or vague. Extract from user message if needed.'),
+      sources: z.array(z.string()).describe('Source documents or reference names. Pass empty array [] if none provided.'),
     }),
   })
+
   async audit_response(
     input: { agentOutput: string; sources: string[] },
     ctx: ExecutionContext
