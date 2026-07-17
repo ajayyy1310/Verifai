@@ -1,0 +1,134 @@
+[
+  {
+    "id": "audit_001",
+    "agentOutput": "TechCorp India reported a revenue of ₹450 crore for FY2025, representing a 22% increase from the previous year.",
+    "sources": ["TechCorp India FY2025 financial statements show total revenue of ₹450 crore, growing 22% year-on-year."],
+    "trustScore": 0.95,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-10T10:00:00Z"
+  },
+  {
+    "id": "audit_002",
+    "agentOutput": "As of March 2025, TechCorp India employs over 1800 professionals across its offices.",
+    "sources": ["Human Resource audit from March 2025 confirms total headcount of 1800 employees in TechCorp India."],
+    "trustScore": 0.92,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-11T11:00:00Z"
+  },
+  {
+    "id": "audit_003",
+    "agentOutput": "The executive leadership of TechCorp India features CEO Priya Sharma and CTO Arjun Mehta.",
+    "sources": ["Corporate governance registry names Priya Sharma as Chief Executive Officer and Arjun Mehta as Chief Technology Officer."],
+    "trustScore": 0.94,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-11T16:30:00Z"
+  },
+  {
+    "id": "audit_004",
+    "agentOutput": "TechCorp's flagship platform TechFlow is currently used by 200 enterprises globally.",
+    "sources": ["TechFlow enterprise client roster contains 200 verified corporate customers."],
+    "trustScore": 0.91,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-12T09:15:00Z"
+  },
+  {
+    "id": "audit_005",
+    "agentOutput": "TechCorp India raised ₹200 crore in its Series C funding round led by Sequoia India.",
+    "sources": ["TechCorp India closed a ₹200 crore Series C funding round with Sequoia India as the lead investor."],
+    "trustScore": 0.93,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-13T14:20:00Z"
+  },
+  {
+    "id": "audit_006",
+    "agentOutput": "TechCorp India announced a strategic partnership with Infosys in March 2025.",
+    "sources": ["Press release: TechCorp India and Infosys signed a joint partnership agreement in March 2025."],
+    "trustScore": 0.90,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-14T12:00:00Z"
+  },
+  {
+    "id": "audit_007",
+    "agentOutput": "TechCorp India received the prestigious NASSCOM AI Innovation Award in 2024.",
+    "sources": ["NASSCOM 2024 award ceremony recognized TechCorp India for its pioneering work with the AI Innovation Award."],
+    "trustScore": 0.96,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-15T09:00:00Z"
+  },
+  {
+    "id": "audit_008",
+    "agentOutput": "TechCorp India is compliant with SOC 2 Type II and ISO 27001 security certifications.",
+    "sources": ["Audit reports confirm TechCorp India maintains active SOC 2 Type II and ISO 27001 certifications."],
+    "trustScore": 0.89,
+    "verdict": "PASS",
+    "mismatches": [],
+    "timestamp": "2026-07-16T15:30:00Z"
+  },
+  {
+    "id": "audit_009",
+    "agentOutput": "TechCorp India announced the launch of its new payment product TechPay last week.",
+    "sources": ["TechCorp India documentation does not mention any product named TechPay."],
+    "trustScore": 0.58,
+    "verdict": "FLAG",
+    "mismatches": [
+      {
+        "claim": "Agent stated: \"TechPay product launch\"",
+        "sourceText": "TechPay not in sources",
+        "issue": "Fabricated product launch: TechPay is not found in source documents."
+      }
+    ],
+    "timestamp": "2026-07-15T13:45:00Z"
+  },
+  {
+    "id": "audit_010",
+    "agentOutput": "TechCorp India operates its headquarters from Chennai.",
+    "sources": ["TechCorp India official registry lists its corporate headquarters in Delhi."],
+    "trustScore": 0.62,
+    "verdict": "FLAG",
+    "mismatches": [
+      {
+        "claim": "Agent stated: \"headquarters from Chennai\"",
+        "sourceText": "Chennai not in sources",
+        "issue": "Wrong office location: source document lists Delhi, not Chennai."
+      }
+    ],
+    "timestamp": "2026-07-16T10:15:00Z"
+  },
+  {
+    "id": "audit_011",
+    "agentOutput": "Google has acquired TechCorp India for ₹5000 crore in cash.",
+    "sources": ["TechCorp India remains an independent private entity with no acquisition history."],
+    "trustScore": 0.12,
+    "verdict": "BLOCK",
+    "mismatches": [
+      {
+        "claim": "Agent stated: \"Google has acquired TechCorp\"",
+        "sourceText": "completely fabricated",
+        "issue": "Completely fabricated: No acquisition agreement has been signed."
+      }
+    ],
+    "timestamp": "2026-07-12T16:20:00Z"
+  },
+  {
+    "id": "audit_012",
+    "agentOutput": "TechCorp India has launched its IPO on NSE at ₹1200 per share.",
+    "sources": ["TechCorp India is privately held and has not filed any draft prospectuses for an IPO."],
+    "trustScore": 0.08,
+    "verdict": "BLOCK",
+    "mismatches": [
+      {
+        "claim": "Agent stated: \"IPO on NSE at ₹1200\"",
+        "sourceText": "completely fabricated",
+        "issue": "Completely fabricated IPO claim: No public listings exist."
+      }
+    ],
+    "timestamp": "2026-07-14T11:00:00Z"
+  }
+]
