@@ -308,8 +308,17 @@ export class HistoryTools {
     totalCount: number;
     dateRange: { start: string; end: string };
   }> {
+    const isoRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!isoRegex.test(input.startDate) || !isoRegex.test(input.endDate)) {
+      throw new Error('Invalid date format. Please provide dates in ISO format (YYYY-MM-DD).');
+    }
+
     const startDate = new Date(input.startDate);
     const endDate = new Date(input.endDate);
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new Error('Invalid date value. Please check the date values or provide them in ISO format (YYYY-MM-DD).');
+    }
+
     endDate.setHours(23, 59, 59, 999);
 
     const filtered = mockAudits.filter(audit => {

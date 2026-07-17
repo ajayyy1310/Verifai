@@ -53,6 +53,10 @@ export class AuditTools {
       entityOverlap: number;
     }>;
   }> {
+    if (!input.sources || input.sources.length === 0) {
+      throw new Error('No sources were provided for verification. Please specify which documents or resources should be used.');
+    }
+
     const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, input.sources);
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
@@ -115,7 +119,7 @@ export class AuditTools {
     const record = auditStore.get(input.auditId);
 
     if (!record) {
-      throw new Error(`Audit not found: ${input.auditId}`);
+      throw new Error(`Audit ID not found: '${input.auditId}'. Please check the ID or use get_audit_log to find valid audit IDs within a date range.`);
     }
 
     return {
