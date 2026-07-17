@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTheme, useWidgetSDK } from '@nitrostack/widgets';
+import { computeTrustScore } from '../../../modules/verify/verifier';
 
 export const dynamic = 'force-dynamic';
 
@@ -464,39 +465,32 @@ export default function AuditFeed() {
           throw new Error('No result returned from audit tool.');
         }
       } else {
-        // Mock audit simulation
+        // Fallback to local verifier when running in standalone browser mode
         setTimeout(() => {
-          const simulatedScore = agentOutputInput.toLowerCase().includes('google') ? 0.12 : 0.95;
-          const simulatedVerdict = simulatedScore >= 0.8 ? 'PASS' : simulatedScore >= 0.4 ? 'FLAG' : 'BLOCK';
+          const { score, verdict, mismatches, claimDetails } = computeTrustScore(agentOutputInput, sourcesArray);
+          
           const newRecord: AuditRecord = {
             id: 'audit_live_' + Date.now(),
             agentOutput: agentOutputInput,
             sources: sourcesArray,
-            trustScore: simulatedScore,
-            verdict: simulatedVerdict,
-            mismatches: simulatedVerdict !== 'PASS' ? [
-              {
-                claim: 'Agent output: ' + agentOutputInput.substring(0, 40) + '...',
-                sourceText: sourcesArray[0] || 'No matching source.',
-                issue: 'Simulated mismatch flag.'
-              }
-            ] : [],
+            trustScore: score,
+            verdict: verdict,
+            mismatches: mismatches,
             timestamp: new Date().toISOString(),
-            claims: [
-              {
-                claim: agentOutputInput,
-                bestSourceText: sourcesArray[0] || '',
-                jaccard: simulatedScore,
-                entityOverlap: simulatedScore,
-                score: simulatedScore,
-                status: simulatedVerdict === 'PASS' ? 'supported' : simulatedVerdict === 'FLAG' ? 'partial' : 'unsupported'
-              }
-            ]
+            claims: claimDetails.map((c: any) => ({
+              claim: c.claim,
+              bestSourceText: '', // computeTrustScore doesn't track best source text anymore
+              jaccard: c.entityRatio, // map entity ratio to visual jaccard bar
+              entityOverlap: c.entityRatio,
+              score: c.supported ? 1 : (c.entityRatio < 0.5 ? 0 : 0.5), // approximate legacy score
+              status: c.supported ? 'supported' : (c.entityRatio > 0.5 ? 'partial' : 'unsupported')
+            }))
           };
+          
           setLiveResult(newRecord);
           setHistoryData(prev => [newRecord, ...prev]);
           updateStatsFromList([newRecord, ...historyData]);
-        }, 1200);
+        }, 300);
       }
     } catch (e: any) {
       console.error(e);
