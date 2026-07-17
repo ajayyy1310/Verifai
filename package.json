@@ -1,5 +1,5 @@
 {
-  "name": "verifai",
+  "name": "halluno-audit",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -28,6 +28,6 @@
   "license": "UNLICENSED",
   "nitrostack": {
     "skillsVersion": "1.0.0",
-    "appName": "Verifai"
+    "appName": "Halluno Audit"
   }
 }

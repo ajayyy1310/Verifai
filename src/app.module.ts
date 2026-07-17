@@ -12,7 +12,7 @@ import { SystemHealthCheck } from './health/system.health.js';
 @McpApp({
   module: AppModule,
   server: {
-    name: 'verifai',
+    name: 'halluno-audit',
     version: '1.0.0'
   },
   logging: {
