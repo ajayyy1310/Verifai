@@ -1,0 +1,750 @@
+[
+  {
+    "id": 1,
+    "difficulty": 1,
+    "category": "Exact Match",
+    "agent": "The company raised 45 million.",
+    "source": "The company raised 45 million.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 2,
+    "difficulty": 1,
+    "category": "Exact Match with Name",
+    "agent": "John Doe visited Paris.",
+    "source": "John Doe visited Paris.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 3,
+    "difficulty": 1,
+    "category": "Exact Match Numbers",
+    "agent": "Inflation is at 5.5%.",
+    "source": "Inflation is at 5.5%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 4,
+    "difficulty": 1,
+    "category": "Case Insensitive",
+    "agent": "apple reported 100 million.",
+    "source": "Apple reported 100 million.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 5,
+    "difficulty": 1,
+    "category": "Trailing Punctuation",
+    "agent": "He won 5 medals!",
+    "source": "He won 5 medals.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 6,
+    "difficulty": 2,
+    "category": "Paraphrase",
+    "agent": "The revenue was $50 million.",
+    "source": "Total revenue hit $50 million this year.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 7,
+    "difficulty": 2,
+    "category": "Number format",
+    "agent": "1,000 people attended.",
+    "source": "1000 people attended the event.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 8,
+    "difficulty": 2,
+    "category": "Word reordering",
+    "agent": "In 2023, Tesla delivered 1.8 million cars.",
+    "source": "Tesla delivered 1.8 million cars in 2023.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 9,
+    "difficulty": 2,
+    "category": "Subset extraction",
+    "agent": "SpaceX launched Falcon 9.",
+    "source": "Yesterday, SpaceX launched Falcon 9 successfully.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 10,
+    "difficulty": 2,
+    "category": "Extra words in agent",
+    "agent": "The new startup successfully raised $10 million.",
+    "source": "The startup raised $10 million.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 11,
+    "difficulty": 3,
+    "category": "Hyphen handling",
+    "agent": "The state-of-the-art facility cost $5 million.",
+    "source": "The state of the art facility cost $5 million.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 12,
+    "difficulty": 3,
+    "category": "Multiple decimals",
+    "agent": "Version 1.2.3 was released on 4.5.2023.",
+    "source": "Version 1.2.3 was released on 4.5.2023.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 13,
+    "difficulty": 3,
+    "category": "Conjunction splitting",
+    "agent": "Google built a new campus and hired 500 engineers.",
+    "source": "Google built a new campus. It hired 500 engineers.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 14,
+    "difficulty": 3,
+    "category": "Conjunction fail",
+    "agent": "Google built a new campus and hired 500 engineers.",
+    "source": "Google built a new campus. It hired 200 engineers.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Google built a new campus and hired 500 engineers",
+        "sourceText": "Google built a new campus. It hired 200 engineers.",
+        "issue": "Numbers in claim (500) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "difficulty": 3,
+    "category": "Decimal without leading zero",
+    "agent": "Growth was .5%.",
+    "source": "Growth was 0.5%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Growth was",
+        "sourceText": "Growth was 0.5%.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "difficulty": 4,
+    "category": "False Number Match",
+    "agent": "Revenues grew by 5%.",
+    "source": "Revenues grew by 10%. We had 5 new products.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Revenues grew by 5%",
+        "sourceText": "Revenues grew by 10%. We had 5 new products.",
+        "issue": "Numbers in claim (5%) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "difficulty": 4,
+    "category": "Currency Symbols",
+    "agent": "Profit is ₹100 crore.",
+    "source": "Profit is 100 crore.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 18,
+    "difficulty": 4,
+    "category": "Unit mismatch",
+    "agent": "100 million users.",
+    "source": "100 billion users.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "100 million users",
+        "sourceText": "100 billion users.",
+        "issue": "Numbers in claim (100 million) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "difficulty": 4,
+    "category": "Comma formatting",
+    "agent": "1,234,567 dollars.",
+    "source": "1234567 dollars.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 20,
+    "difficulty": 4,
+    "category": "Missing claim numbers",
+    "agent": "High revenue growth.",
+    "source": "Revenue grew 50%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "High revenue growth",
+        "sourceText": "Revenue grew 50%.",
+        "issue": "Low entity overlap (33%)"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "difficulty": 5,
+    "category": "Empty claim",
+    "agent": "Wow.",
+    "source": "Revenue grew 50%.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 22,
+    "difficulty": 5,
+    "category": "Stopwords only",
+    "agent": "It is the.",
+    "source": "It is the company.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "It is the",
+        "sourceText": "It is the company.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "difficulty": 5,
+    "category": "1 token only",
+    "agent": "Microsoft.",
+    "source": "Microsoft grew 5%.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Microsoft",
+        "sourceText": "Microsoft grew 5%.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "difficulty": 5,
+    "category": "1 token 1 number",
+    "agent": "Microsoft 5",
+    "source": "Microsoft grew 5%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Microsoft 5",
+        "sourceText": "Microsoft grew 5%.",
+        "issue": "Numbers in claim (5) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "difficulty": 5,
+    "category": "Pronoun hallucination",
+    "agent": "He won 500.",
+    "source": "She won 500.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 26,
+    "difficulty": 6,
+    "category": "Multi-source exact",
+    "agent": "A is 1. B is 2.",
+    "source": "A is 1.\nB is 2.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 1",
+        "sourceText": "A is 1. | B is 2.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "difficulty": 6,
+    "category": "Multi-source fusion",
+    "agent": "Company X raised $10M from Y.",
+    "source": "Company X raised $10M.\nThe funding was from Y.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 28,
+    "difficulty": 6,
+    "category": "Multi-source contradiction",
+    "agent": "X is 10.",
+    "source": "X is 5.\nX is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 29,
+    "difficulty": 6,
+    "category": "Multi-source number fusion",
+    "agent": "X is 10 and Y is 20.",
+    "source": "X is 10.\nY is 15.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "X is 10 and Y is 20",
+        "sourceText": "X is 10. | Y is 15.",
+        "issue": "Numbers in claim (20) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "difficulty": 6,
+    "category": "Multi-source entity fusion",
+    "agent": "X and Y went to Z.",
+    "source": "X went to Z.\nY stayed home.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 31,
+    "difficulty": 7,
+    "category": "Pure hallucination",
+    "agent": "Mars colonization starts in 2030.",
+    "source": "SpaceX launched a rocket.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Mars colonization starts in 2030",
+        "sourceText": "SpaceX launched a rocket.",
+        "issue": "Numbers in claim (2030) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "difficulty": 7,
+    "category": "Entity hallucination",
+    "agent": "Apple launched iPhone 15.",
+    "source": "Samsung launched Galaxy S24.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Apple launched iPhone 15",
+        "sourceText": "Samsung launched Galaxy S24.",
+        "issue": "Numbers in claim (15) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "difficulty": 7,
+    "category": "Number hallucination",
+    "agent": "Revenue was 900.",
+    "source": "Revenue was 100.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Revenue was 900",
+        "sourceText": "Revenue was 100.",
+        "issue": "Numbers in claim (900) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "difficulty": 7,
+    "category": "Number combination hallucination",
+    "agent": "Total is 150.",
+    "source": "A is 100. B is 50.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Total is 150",
+        "sourceText": "A is 100. B is 50.",
+        "issue": "Numbers in claim (150) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "difficulty": 7,
+    "category": "Subtle addition",
+    "agent": "He visited Paris and London.",
+    "source": "He visited Paris.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 36,
+    "difficulty": 8,
+    "category": "Abbreviations",
+    "agent": "U.S. GDP is 5%.",
+    "source": "US GDP is 5%.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "U.S. GDP is 5%",
+        "sourceText": "US GDP is 5%.",
+        "issue": "Low entity overlap (33%)"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "difficulty": 8,
+    "category": "Percentage formats",
+    "agent": "fifty percent.",
+    "source": "50%.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "fifty percent",
+        "sourceText": "50%.",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "difficulty": 8,
+    "category": "Dates",
+    "agent": "Jan 1, 2024.",
+    "source": "January 1st, 2024.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Jan 1, 2024",
+        "sourceText": "January 1st, 2024.",
+        "issue": "Numbers in claim (1, 2024) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "difficulty": 8,
+    "category": "Mixed alphanumeric",
+    "agent": "Model-X15 cost $10.",
+    "source": "Model X15 cost $10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 40,
+    "difficulty": 8,
+    "category": "Quoted text",
+    "agent": "He said \"Hello world\".",
+    "source": "He said Hello world.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 41,
+    "difficulty": 9,
+    "category": "Semicolon splits",
+    "agent": "A is 1; B is 2.",
+    "source": "A is 1.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 1",
+        "sourceText": "A is 1.",
+        "issue": "Low entity overlap (30%)"
+      },
+      {
+        "claim": "B is 2",
+        "sourceText": "A is 1.",
+        "issue": "Numbers in claim (2) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "difficulty": 9,
+    "category": "Colon splits",
+    "agent": "Results: A is 1.",
+    "source": "A is 1.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Results",
+        "sourceText": "A is 1.",
+        "issue": "Low entity overlap (0%)"
+      },
+      {
+        "claim": "A is 1",
+        "sourceText": "A is 1.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "difficulty": 9,
+    "category": "Multiple independent clauses",
+    "agent": "It rained heavily and the roads flooded, but we drove safely.",
+    "source": "It rained heavily. The roads flooded.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "FLAG",
+    "score": 0.6666666666666666,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "we drove safely",
+        "sourceText": "It rained heavily. The roads flooded.",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "difficulty": 9,
+    "category": "Nested quotes",
+    "agent": "The report stated: 'Growth was 5%.'",
+    "source": "The report stated growth was 5%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 45,
+    "difficulty": 9,
+    "category": "Acronym vs Full",
+    "agent": "NASA launched.",
+    "source": "National Aeronautics and Space Administration launched.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "NASA launched",
+        "sourceText": "National Aeronautics and Space Administration launched.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "difficulty": 10,
+    "category": "Many numbers",
+    "agent": "1, 2, 3, 4, 5.",
+    "source": "1, 2, 3.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "1, 2, 3, 4, 5",
+        "sourceText": "1, 2, 3.",
+        "issue": "Numbers in claim (4, 5) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "difficulty": 10,
+    "category": "Same numbers, wrong order",
+    "agent": "A is 10, B is 20.",
+    "source": "A is 20, B is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 48,
+    "difficulty": 10,
+    "category": "Decimal boundaries",
+    "agent": "10.0.",
+    "source": "10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 49,
+    "difficulty": 10,
+    "category": "No space after punctuation",
+    "agent": "End.Start.",
+    "source": "End. Start.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Start",
+        "sourceText": "End. Start.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "difficulty": 10,
+    "category": "Massive text block",
+    "agent": "Summary of events.",
+    "source": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Summary of events.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  }
+]

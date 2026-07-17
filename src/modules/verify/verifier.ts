@@ -23,11 +23,15 @@ export function extractClaims(text: string): string[] {
   // Protect decimal numbers
   let processedText = text.replace(/(\d+)\.(\d+)/g, '$1_DECIMAL_$2');
 
+  // Protect common abbreviations
+  const abbrRegex = /\b(U\.S\.|Dr\.|Mr\.|Mrs\.|Ms\.|Prof\.|Inc\.|Ltd\.|Corp\.|vs\.|etc\.)/gi;
+  processedText = processedText.replace(abbrRegex, (match) => match.replace(/\./g, '_DOT_'));
+
   // Step 1: Split on sentence boundaries
   let claims = processedText.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
 
-  // Restore decimals
-  claims = claims.map(claim => claim.replace(/_DECIMAL_/g, '.'));
+  // Restore decimals and abbreviations
+  claims = claims.map(claim => claim.replace(/_DECIMAL_/g, '.').replace(/_DOT_/g, '.'));
 
   // Step 2: Further split on semicolons and colons
   claims = claims.flatMap(claim => claim.split(/[;:]+/).map(s => s.trim()).filter(s => s.length > 0));
@@ -35,8 +39,8 @@ export function extractClaims(text: string): string[] {
   // Step 3: Split on coordinating conjunctions when they join independent clauses
   claims = claims.flatMap(claim => splitOnConjunctions(claim));
 
-  // Step 4: Filter out fragments < 15 characters
-  claims = claims.filter(claim => claim.length >= 15);
+  // Step 4: Filter out extremely short fragments < 5 characters
+  claims = claims.filter(claim => claim.length >= 5);
 
   return claims;
 }
@@ -72,6 +76,13 @@ function splitOnConjunctions(claim: string): string[] {
 }
 
 /**
+ * Normalize number string by stripping commas, currency symbols, and whitespace.
+ */
+export function normalizeNumber(numStr: string): string {
+  return numStr.replace(/[₹$€£,\s]/g, '');
+}
+
+/**
  * Extract all numbers from text, normalized.
  * Returns array of complete number strings (with currency/units).
  */
@@ -103,25 +114,45 @@ export type ClaimResult = {
 
 export function compareNumbers(claim: string, source: string): NumberComparison {
   const claimNumbers = extractNumbers(claim);
-  const sourceNumbers = extractNumbers(source);
+  const claimEntities = extractEntities(claim);
 
   const matched: string[] = [];
   const claimOnly: string[] = [];
-  const sourceOnly: Set<string> = new Set(sourceNumbers);
+  const sourceOnlyStrings = new Set<string>();
+  const contextValidatedSourceNumbers = new Set<string>();
+
+  const sourceFragments = extractClaims(source);
+  sourceFragments.forEach(fragment => {
+    const fragmentEntities = extractEntities(fragment);
+    const fragmentNumbers = extractNumbers(fragment);
+    
+    fragmentNumbers.forEach(n => sourceOnlyStrings.add(n));
+
+    const hasOverlap = claimEntities.some(ce => 
+      fragmentEntities.some(fe => fe.toLowerCase() === ce.toLowerCase())
+    );
+
+    if (hasOverlap || claimEntities.length === 0) {
+      fragmentNumbers.forEach(n => contextValidatedSourceNumbers.add(normalizeNumber(n)));
+    }
+  });
+
+  const claimNumbersNorm = claimNumbers.map(n => normalizeNumber(n));
 
   claimNumbers.forEach(num => {
-    if (sourceNumbers.includes(num)) {
+    if (contextValidatedSourceNumbers.has(normalizeNumber(num))) {
       matched.push(num);
-      sourceOnly.delete(num);
     } else {
       claimOnly.push(num);
     }
   });
 
+  const sourceOnly = Array.from(sourceOnlyStrings).filter(num => !claimNumbersNorm.includes(normalizeNumber(num)));
+
   const result: NumberComparison = {
     matched,
     claimOnly,
-    sourceOnly: Array.from(sourceOnly),
+    sourceOnly,
   };
   return result;
 }
@@ -170,14 +201,29 @@ export function verifyClaimAgainstSource(claim: string, sources: string[]): {
   let totalEntityMatches = 0;
   const allSourceEntities = new Set<string>();
   const allSourceNumbers = new Set<string>();
+  const contextValidatedSourceNumbers = new Set<string>();
 
   sources.forEach(source => {
     extractEntities(source).forEach(e => allSourceEntities.add(e));
-    extractNumbers(source).forEach(n => allSourceNumbers.add(n));
+    
+    const sourceFragments = extractClaims(source);
+    sourceFragments.forEach(fragment => {
+      const fragmentEntities = extractEntities(fragment);
+      const fragmentNumbers = extractNumbers(fragment);
+      
+      fragmentNumbers.forEach(n => allSourceNumbers.add(n));
+
+      const hasOverlap = claimEntities.some(ce => 
+        fragmentEntities.some(fe => fe.toLowerCase() === ce.toLowerCase())
+      );
+
+      if (hasOverlap || claimEntities.length === 0) {
+        fragmentNumbers.forEach(n => contextValidatedSourceNumbers.add(normalizeNumber(n)));
+      }
+    });
   });
 
   const sourceEntitiesArr = Array.from(allSourceEntities);
-  const sourceNumbersArr = Array.from(allSourceNumbers);
 
   // Count entity matches against union of all source entities
   claimEntities.forEach(entity => {
@@ -186,13 +232,15 @@ export function verifyClaimAgainstSource(claim: string, sources: string[]): {
     }
   });
 
-  // Check number matches against union of all source numbers
-  const matchedNumbers = claimNumbers.filter(num => sourceNumbersArr.includes(num));
-  const claimOnlyNumbers = claimNumbers.filter(num => !sourceNumbersArr.includes(num));
+  const claimNumbersNorm = claimNumbers.map(n => normalizeNumber(n));
+
+  // Check number matches against context-validated source numbers
+  const matchedNumbers = claimNumbers.filter(num => contextValidatedSourceNumbers.has(normalizeNumber(num)));
+  const claimOnlyNumbers = claimNumbers.filter(num => !contextValidatedSourceNumbers.has(normalizeNumber(num)));
   const numberComparison: NumberComparison = {
     matched: matchedNumbers,
     claimOnly: claimOnlyNumbers,
-    sourceOnly: sourceNumbersArr.filter(num => !claimNumbers.includes(num))
+    sourceOnly: Array.from(allSourceNumbers).filter(num => !claimNumbersNorm.includes(normalizeNumber(num)))
   };
 
   let numberMatch = true;

@@ -15,7 +15,7 @@ interface AuditRecord {
   agentOutput: string;
   sources: string[];
   trustScore: number;
-  verdict: 'PASS' | 'BLOCK';
+  verdict: 'PASS' | 'BLOCK' | 'FLAG';
   mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
   timestamp: string;
   imageUrl?: string;

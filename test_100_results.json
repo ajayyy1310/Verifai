@@ -1,0 +1,1479 @@
+[
+  {
+    "id": 1,
+    "category": "False friend numbers",
+    "agent": "Revenues reached 50%.",
+    "source": "Costs increased by 50%. Revenues are stable.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Revenues reached 50%",
+        "sourceText": "Costs increased by 50%. Revenues are stable.",
+        "issue": "Numbers in claim (50%) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "category": "False friend entity",
+    "agent": "Apple sold 500 cars.",
+    "source": "Apple sold 500 phones. Ford sold 500 cars.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 3,
+    "category": "Unit swapping",
+    "agent": "It cost $1000.",
+    "source": "It cost 1000 Euros.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 4,
+    "category": "Number order inversion",
+    "agent": "A is 10 and B is 20.",
+    "source": "A is 20 and B is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 5,
+    "category": "Hallucinated correlation",
+    "agent": "Growth was 5% due to new tech.",
+    "source": "Growth was 5%. New tech was introduced.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 6,
+    "category": "Entity overlap without semantic match",
+    "agent": "The dog chased the cat.",
+    "source": "The cat chased the dog.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 7,
+    "category": "Number existence without context",
+    "agent": "Product X has 10 features.",
+    "source": "Product Y has 10 features. Product X is new.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 8,
+    "category": "Date false friends",
+    "agent": "Launch in 2024.",
+    "source": "Founded in 2024. No launch date.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Launch in 2024",
+        "sourceText": "Founded in 2024. No launch date.",
+        "issue": "Numbers in claim (2024) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "Mixed units",
+    "agent": "50 km.",
+    "source": "50 miles.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "50 km",
+        "sourceText": "50 miles.",
+        "issue": "Numbers in claim (50) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "category": "Quantity hallucination",
+    "agent": "All 50 workers quit.",
+    "source": "50 workers were hired.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "All 50 workers quit",
+        "sourceText": "50 workers were hired.",
+        "issue": "Low entity overlap (33%)"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "category": "Compound independent clauses",
+    "agent": "The company grew and it hired 500 people.",
+    "source": "The company grew. It hired 500 people.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 12,
+    "category": "Compound mismatch",
+    "agent": "The company grew and it hired 500 people.",
+    "source": "The company grew. It hired 200 people.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "it hired 500 people",
+        "sourceText": "The company grew. It hired 200 people.",
+        "issue": "Numbers in claim (500) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "category": "Semicolon usage",
+    "agent": "Sales up 10%; profits down 5%.",
+    "source": "Sales up 10%. Profits up 5%.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 14,
+    "category": "Colon usage",
+    "agent": "Results: 10% growth.",
+    "source": "Growth was 10%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Results",
+        "sourceText": "Growth was 10%.",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "category": "List extraction",
+    "agent": "Items: A, B, and C.",
+    "source": "Items include A and B. C is excluded.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Items",
+        "sourceText": "Items include A and B. C is excluded.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "category": "Nested conjunctions",
+    "agent": "It rained but we played and we won.",
+    "source": "It rained. We played. We lost.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "It rained",
+        "sourceText": "It rained. We played. We lost.",
+        "issue": "Low entity overlap (30%)"
+      },
+      {
+        "claim": "we played and we won",
+        "sourceText": "It rained. We played. We lost.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "category": "Sentence fragment agent",
+    "agent": "500 users.",
+    "source": "We have 500 users.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 18,
+    "category": "Overlapping but conflicting",
+    "agent": "He bought apples and oranges.",
+    "source": "He bought apples but sold oranges.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 19,
+    "category": "Subordinate clauses",
+    "agent": "Although it rained, 500 people came.",
+    "source": "It rained. 500 people came.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 20,
+    "category": "Long run-on agent",
+    "agent": "The team worked hard and they built the app and they launched in 2023 and got 1000 users.",
+    "source": "Team worked hard. App launched in 2023. Got 1000 users.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "FLAG",
+    "score": 0.75,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "they built the app",
+        "sourceText": "Team worked hard. App launched in 2023. Got 1000 users.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "category": "Abbreviation at end",
+    "agent": "He works at Apple Inc. The profits are 10%.",
+    "source": "He works at Apple Inc. Profits: 10%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "He works at Apple Inc. The profits are 10%",
+        "sourceText": "He works at Apple Inc. Profits: 10%.",
+        "issue": "Numbers in claim (10%) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "category": "Multiple abbreviations",
+    "agent": "Dr. Smith went to the U.S. in 2024.",
+    "source": "Dr. Smith went to the U.S. in 2024.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 23,
+    "category": "Missing abbreviation",
+    "agent": "US GDP grew.",
+    "source": "U.S. GDP grew.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 24,
+    "category": "Trailing comma",
+    "agent": "The cost is 1,000, which is high.",
+    "source": "Cost is 1,000.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "The cost is 1,000, which is high",
+        "sourceText": "Cost is 1,000.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "category": "Percentage formatting",
+    "agent": "50.5% growth.",
+    "source": "50.5% growth.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 26,
+    "category": "No space number",
+    "agent": "Profit is $50M.",
+    "source": "Profit is $50M.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 27,
+    "category": "Hyphenated numbers",
+    "agent": "A 5-year plan.",
+    "source": "A 5 year plan.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 28,
+    "category": "Ranges",
+    "agent": "10-20 units.",
+    "source": "10 to 20 units.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 29,
+    "category": "Parentheses",
+    "agent": "Revenue (100) increased.",
+    "source": "Revenue was 100.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Revenue (100) increased",
+        "sourceText": "Revenue was 100.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "category": "Quotation marks",
+    "agent": "He said '100'.",
+    "source": "He said 100.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 31,
+    "category": "Written vs digit",
+    "agent": "Fifty users.",
+    "source": "50 users.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Fifty users",
+        "sourceText": "50 users.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "category": "M vs million",
+    "agent": "50M users.",
+    "source": "50 million users.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "50M users",
+        "sourceText": "50 million users.",
+        "issue": "Numbers in claim (50) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "category": "Fraction vs decimal",
+    "agent": "1/2 of people.",
+    "source": "0.5 of people.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "1/2 of people",
+        "sourceText": "0.5 of people.",
+        "issue": "Numbers in claim (1, 2) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "category": "Zero padding",
+    "agent": "05 users.",
+    "source": "5 users.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "05 users",
+        "sourceText": "5 users.",
+        "issue": "Numbers in claim (05) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "category": "Decimal precision",
+    "agent": "5.00%",
+    "source": "5%",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "5.00%",
+        "sourceText": "5%",
+        "issue": "Numbers in claim (5.00%) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "category": "Commas in decimals",
+    "agent": "1,000.50",
+    "source": "1000.5",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "1,000.50",
+        "sourceText": "1000.5",
+        "issue": "Numbers in claim (1,000.50) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "category": "Currency mismatch",
+    "agent": "€100",
+    "source": "$100",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 38,
+    "category": "Negative numbers",
+    "agent": "Lost -50.",
+    "source": "Lost 50.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 39,
+    "category": "Ordinal numbers",
+    "agent": "1st place.",
+    "source": "1 place.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 40,
+    "category": "Large integers",
+    "agent": "1000000",
+    "source": "1,000,000",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "1000000",
+        "sourceText": "1,000,000",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "category": "Scattered entities",
+    "agent": "John, Mary, and Bob went to Paris in 2024.",
+    "source": "John went to Paris.\nMary was there in 2024.\nBob visited Paris too.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 42,
+    "category": "Scattered numbers",
+    "agent": "A is 10, B is 20, C is 30.",
+    "source": "A is 10.\nB is 20.\nC is 30.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 10, B is 20, C is 30",
+        "sourceText": "A is 10.\nB is 20.\nC is 30.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "category": "Missing one scattered number",
+    "agent": "A is 10, B is 20, C is 30.",
+    "source": "A is 10.\nB is 20.\nC is 40.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 10, B is 20, C is 30",
+        "sourceText": "A is 10.\nB is 20.\nC is 40.",
+        "issue": "Numbers in claim (10, 30) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "category": "Conflicting sources",
+    "agent": "Stock price is 150.",
+    "source": "Stock was 100.\nStock is 150 now.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Stock price is 150",
+        "sourceText": "Stock was 100.\nStock is 150 now.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "category": "Aggregated sum",
+    "agent": "Total is 30.",
+    "source": "A is 10.\nB is 20.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Total is 30",
+        "sourceText": "A is 10.\nB is 20.",
+        "issue": "Numbers in claim (30) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "category": "Entity assembly",
+    "agent": "The red car is fast.",
+    "source": "The car is red.\nThe car is fast.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 47,
+    "category": "Context lost across sources",
+    "agent": "A grew 50%.",
+    "source": "A grew.\nB grew 50%.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 48,
+    "category": "Massive source haystack",
+    "agent": "X is 5.",
+    "source": "Y is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nX is 5.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\n",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 49,
+    "category": "Contradiction in haystack",
+    "agent": "X is 10.",
+    "source": "Y is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nX is 5.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\n",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "X is 10",
+        "sourceText": "Y is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nX is 5.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\n",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "category": "Fragmented conjunction across sources",
+    "agent": "X and Y are 10.",
+    "source": "X is 10.\nY is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 51,
+    "category": "Exactly 0.5 entity ratio",
+    "agent": "A B C D",
+    "source": "A B X Y",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "A B C D",
+        "sourceText": "A B X Y",
+        "issue": "Low entity overlap (33%)"
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "category": "0.51 entity ratio",
+    "agent": "A B C D E",
+    "source": "A B C X Y",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A B C D E",
+        "sourceText": "A B C X Y",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "category": "Exactly 2 tokens",
+    "agent": "A B",
+    "source": "A B",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 54,
+    "category": "1 token 1 number",
+    "agent": "A 10",
+    "source": "A 10",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 55,
+    "category": "1 token 0 numbers",
+    "agent": "Hello",
+    "source": "Hello world",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Hello",
+        "sourceText": "Hello world",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "category": "0 tokens 1 number",
+    "agent": "10",
+    "source": "10",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 57,
+    "category": "Stopword heavy claim",
+    "agent": "The and of it is 10.",
+    "source": "It is 10.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "The and of it is 10",
+        "sourceText": "It is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 58,
+    "category": "Massive claim",
+    "agent": "A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A  10.",
+    "source": "A 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A  10",
+        "sourceText": "A 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 59,
+    "category": "Zero overlap",
+    "agent": "A",
+    "source": "B",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 60,
+    "category": "Complete mismatch but same length",
+    "agent": "A B C",
+    "source": "X Y Z",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "A B C",
+        "sourceText": "X Y Z",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
+  },
+  {
+    "id": 61,
+    "category": "Apostrophes",
+    "agent": "John's car is 5.",
+    "source": "John's car is 5.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 62,
+    "category": "Quotes attached to numbers",
+    "agent": "\"10\"",
+    "source": "10",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 63,
+    "category": "Periods inside words",
+    "agent": "A.I. is 10.",
+    "source": "AI is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "is 10",
+        "sourceText": "AI is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 64,
+    "category": "Underscores",
+    "agent": "A_B is 10.",
+    "source": "A B is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A_B is 10",
+        "sourceText": "A B is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "category": "Slashes",
+    "agent": "A/B is 10.",
+    "source": "A B is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 66,
+    "category": "Ampersands",
+    "agent": "A & B is 10.",
+    "source": "A and B is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 67,
+    "category": "Plus signs",
+    "agent": "A + B = 10.",
+    "source": "A plus B is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 68,
+    "category": "Equals sign",
+    "agent": "A=10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 69,
+    "category": "Brackets",
+    "agent": "[A] is 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "[A] is 10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "category": "Special unicode",
+    "agent": "A™ is 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A™ is 10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "category": "Double negative",
+    "agent": "A is not 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is not 10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "category": "Subject inversion",
+    "agent": "10 attacked A.",
+    "source": "A attacked 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 73,
+    "category": "Number substring",
+    "agent": "10",
+    "source": "100",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 74,
+    "category": "Prefix modification",
+    "agent": "Pre-A is 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Pre-A is 10",
+        "sourceText": "A is 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 75,
+    "category": "Suffix modification",
+    "agent": "A-ing is 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A-ing is 10",
+        "sourceText": "A is 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 76,
+    "category": "Hyphenated prefix match",
+    "agent": "Non-profit is 10.",
+    "source": "Profit is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Non-profit is 10",
+        "sourceText": "Profit is 10.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
+  },
+  {
+    "id": 77,
+    "category": "Different tense",
+    "agent": "A jumped 10.",
+    "source": "A jumps 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A jumped 10",
+        "sourceText": "A jumps 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 78,
+    "category": "Plural vs Singular",
+    "agent": "Apples are 10.",
+    "source": "Apple is 10.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Apples are 10",
+        "sourceText": "Apple is 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 79,
+    "category": "Spelling mistake",
+    "agent": "Definately 10.",
+    "source": "Definitely 10.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Definately 10",
+        "sourceText": "Definitely 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 80,
+    "category": "Missing critical noun",
+    "agent": "The 10 was good.",
+    "source": "The movie was good. Rating 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "The 10 was good",
+        "sourceText": "The movie was good. Rating 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 81,
+    "category": "Exactly 0.8 score threshold",
+    "agent": "A is 1. B is 2. C is 3. D is 4. E is 5.",
+    "source": "A is 1. B is 2. C is 3. D is 4. E is 6.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "FLAG",
+    "score": 0.6,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "A is 1",
+        "sourceText": "A is 1. B is 2. C is 3. D is 4. E is 6.",
+        "issue": "Low entity overlap (30%)"
+      },
+      {
+        "claim": "E is 5",
+        "sourceText": "A is 1. B is 2. C is 3. D is 4. E is 6.",
+        "issue": "Numbers in claim (5) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 82,
+    "category": "Exactly 0.4 score threshold",
+    "agent": "A is 1. B is 2. C is 3. D is 4. E is 5.",
+    "source": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0.2,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 1",
+        "sourceText": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
+        "issue": "Low entity overlap (30%)"
+      },
+      {
+        "claim": "C is 3",
+        "sourceText": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
+        "issue": "Numbers in claim (3) not found in sources"
+      },
+      {
+        "claim": "D is 4",
+        "sourceText": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
+        "issue": "Numbers in claim (4) not found in sources"
+      },
+      {
+        "claim": "E is 5",
+        "sourceText": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
+        "issue": "Numbers in claim (5) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 83,
+    "category": "0.39 score threshold",
+    "agent": "A 1. B 2. C 3. D 4. E 5.",
+    "source": "A 1. X 0. Y 0. Z 0. W 0.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 84,
+    "category": "Empty source array",
+    "agent": "A is 10.",
+    "source": "",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "A is 10",
+        "sourceText": "",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 85,
+    "category": "Empty claim array",
+    "agent": "...",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 86,
+    "category": "Trailing spaces",
+    "agent": "A is 10.   ",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 87,
+    "category": "Line breaks in claim",
+    "agent": "A is \n 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is \n 10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 88,
+    "category": "Multiple spaces in claim",
+    "agent": "A   is    10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A   is    10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 89,
+    "category": "Number at start",
+    "agent": "10 is A.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "10 is A",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 90,
+    "category": "Number at end with period",
+    "agent": "A is 10.",
+    "source": "A is 10.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 10",
+        "sourceText": "A is 10.",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 91,
+    "category": "Conjunction + Abbreviation + Decimal",
+    "agent": "Dr. Smith and Mrs. Jones made $1.5M.",
+    "source": "Dr. Smith made $1.5M. Mrs. Jones helped.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
+  },
+  {
+    "id": 92,
+    "category": "Semicolon + Multi-source + False friend",
+    "agent": "A is 10; B is 20.",
+    "source": "A is 10.\nC is 20.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 10",
+        "sourceText": "A is 10.\nC is 20.",
+        "issue": "Low entity overlap (30%)"
+      },
+      {
+        "claim": "B is 20",
+        "sourceText": "A is 10.\nC is 20.",
+        "issue": "Numbers in claim (20) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 93,
+    "category": "Comma format + abbreviation + unit mismatch",
+    "agent": "U.S. GDP is 1,000 billion.",
+    "source": "U.S. GDP is 1000 million.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "U.S. GDP is 1,000 billion",
+        "sourceText": "U.S. GDP is 1000 million.",
+        "issue": "Numbers in claim (1,000 billion) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 94,
+    "category": "Hyphenation + Decimal + Pronoun",
+    "agent": "The state-of-the-art AI grew 5.5%.",
+    "source": "State of the art AI grew 5.5%.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  },
+  {
+    "id": 95,
+    "category": "Long text + Semicolon + Number swap",
+    "agent": "Revenues were $10M; costs were $5M.",
+    "source": "Costs were $10M. Revenues were $5M.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Revenues were $10M",
+        "sourceText": "Costs were $10M. Revenues were $5M.",
+        "issue": "Numbers in claim ($10) not found in sources"
+      },
+      {
+        "claim": "costs were $5M",
+        "sourceText": "Costs were $10M. Revenues were $5M.",
+        "issue": "Numbers in claim ($5) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 96,
+    "category": "Short claim + Number context fail",
+    "agent": "Apples 50.",
+    "source": "Oranges 50.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "Apples 50",
+        "sourceText": "Oranges 50.",
+        "issue": "Numbers in claim (50) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 97,
+    "category": "Abbreviation collision",
+    "agent": "He went to the U.S. and saw Dr. X.",
+    "source": "He went to U.S.",
+    "expectedVerdict": "FLAG",
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "saw Dr. X",
+        "sourceText": "He went to U.S.",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
+  },
+  {
+    "id": 98,
+    "category": "Decimal without zero + Unit",
+    "agent": ".5 million.",
+    "source": "0.5 million.",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "5 million",
+        "sourceText": "0.5 million.",
+        "issue": "Numbers in claim (5 million) not found in sources"
+      }
+    ]
+  },
+  {
+    "id": 99,
+    "category": "Quoted numbers",
+    "agent": "'10.5%'",
+    "source": "10.5%",
+    "expectedVerdict": "BLOCK",
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "'10.5%'",
+        "sourceText": "10.5%",
+        "issue": "Low entity overlap (30%)"
+      }
+    ]
+  },
+  {
+    "id": 100,
+    "category": "The ultimate haystack",
+    "agent": "Dr. Smith, U.S. CEO of Apple Inc., raised $1,234.56 in 2024; however he lost $500.",
+    "source": "Apple Inc. CEO Dr. Smith raised 1234.56 dollars in the U.S. during 2024. He lost 500.",
+    "expectedVerdict": "PASS",
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
+  }
+]
