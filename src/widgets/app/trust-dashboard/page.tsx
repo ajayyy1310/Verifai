@@ -805,7 +805,7 @@ export default function TrustDashboard() {
 
   const loadData = () => {
     try {
-      const stored = localStorage.getItem('halluno-audits');
+      const stored = localStorage.getItem('verifai-audits');
       let currentAudits: AuditRecord[] = [];
       if (stored) {
         currentAudits = JSON.parse(stored);

@@ -18,8 +18,7 @@ Verifai is a Model Context Protocol (MCP) server that detects and scores AI-gene
 ### Modules
 
 - **`verify`** — Core hallucination detection
-  - `verifier.ts` — Engine handling sentence fragmentation, number normalization, abbreviation protection, and context-aware extraction
-  - `scorer.ts` — Threshold logic for `PASS` (>0.8 & 0 unsupported), `FLAG` (>=0.4), and `BLOCK` (<0.4)
+  - `verifier.ts` — Engine handling sentence fragmentation, number normalization, abbreviation protection, context-aware extraction, and scoring logic
   - `audit_response` — Score agent output against sources
   - `explain_audit` — Detailed mismatch analysis with citations
 
@@ -66,20 +65,15 @@ npm run widget       # Manage widget dependencies
 
 ```
 src/
-├── app.module.ts           # Root module (registers verify, history, calculator)
+├── app.module.ts           # Root module (registers verify and history modules)
 ├── index.ts                # MCP server entry point
 ├── modules/
 │   ├── verify/             # Hallucination detection
 │   │   ├── verify.module.ts
 │   │   └── audit.tools.ts
-│   ├── history/            # Audit tracking
-│   │   ├── history.module.ts
-│   │   └── history.tools.ts
-│   └── calculator/         # Scoring logic
-│       ├── calculator.module.ts
-│       ├── calculator.tools.ts
-│       ├── calculator.resources.ts
-│       └── calculator.prompts.ts
+│   └── history/            # Audit tracking
+│       ├── history.module.ts
+│       └── history.tools.ts
 ├── health/
 │   └── system.health.ts    # System health check
 └── widgets/

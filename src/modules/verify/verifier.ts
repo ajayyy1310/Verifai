@@ -37,6 +37,13 @@ function normalizeText(text: string): string {
   // Periods inside abbreviations: U.S. → US, A.I. → AI
   t = t.replace(/\b([A-Z])\.([A-Z])\.([A-Z])?\.?/g, (_, a, b, c) => (a + b + (c || '')));
 
+  // Abbreviation expansions
+  t = t.replace(/\bU\.K\./gi, 'UK');
+  t = t.replace(/\bPh\.D\./gi, 'PhD');
+  t = t.replace(/\bDr\b\.?/gi, 'Doctor');
+  t = t.replace(/\bMt\b\.?/gi, 'Mount');
+  t = t.replace(/\bSt\b\.?/gi, 'Saint');
+
   // Month abbreviations → full names (for date matching)
   const months: Record<string, string> = {
     Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April',
@@ -48,6 +55,18 @@ function normalizeText(text: string): string {
 
   // Ordinals: 1st → 1, 2nd → 2 (for date matching)
   t = t.replace(/\b(\d+)(st|nd|rd|th)\b/gi, '$1');
+
+  // Number words → digits
+  const numberWords: Record<string, string> = {
+    zero: '0', one: '1', two: '2', three: '3', four: '4', five: '5',
+    six: '6', seven: '7', eight: '8', nine: '9', ten: '10',
+    eleven: '11', twelve: '12', thirteen: '13', fourteen: '14', fifteen: '15',
+    sixteen: '16', seventeen: '17', eighteen: '18', nineteen: '19', twenty: '20',
+    thirty: '30', forty: '40', fifty: '50', sixty: '60', seventy: '70',
+    eighty: '80', ninety: '90', hundred: '100'
+  };
+  const numWordRegex = /\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\b/gi;
+  t = t.replace(numWordRegex, (match) => numberWords[match.toLowerCase()] ?? match);
 
   // & → and
   t = t.replace(/\s*&\s*/g, ' and ');
@@ -456,28 +475,43 @@ export type ClaimResult = {
   numberMatch: boolean;
 };
 
+export function getContextValidatedNumbers(
+  claimEntities: string[],
+  sources: string[]
+): {
+  contextValidatedSourceNumbers: Set<string>;
+  allSourceNumbers: Set<string>;
+} {
+  const contextValidatedSourceNumbers = new Set<string>();
+  const allSourceNumbers = new Set<string>();
+
+  sources.forEach(source => {
+    const sourceFragments = extractClaims(source);
+    sourceFragments.forEach(fragment => {
+      const fragmentEntities = extractEntities(fragment);
+      const fragmentNumbers = extractNumbers(fragment);
+      fragmentNumbers.forEach(n => allSourceNumbers.add(n));
+
+      const hasOverlap = claimEntities.some(ce =>
+        fragmentEntities.some(fe => fe.toLowerCase() === ce.toLowerCase())
+      );
+      if (hasOverlap || claimEntities.length === 0) {
+        fragmentNumbers.forEach(n => contextValidatedSourceNumbers.add(normalizeNumber(n)));
+      }
+    });
+  });
+
+  return { contextValidatedSourceNumbers, allSourceNumbers };
+}
+
 export function compareNumbers(claim: string, source: string): NumberComparison {
   const claimNumbers = extractNumbers(claim);
   const claimEntities = extractEntities(claim);
 
+  const { contextValidatedSourceNumbers, allSourceNumbers } = getContextValidatedNumbers(claimEntities, [source]);
+
   const matched: string[] = [];
   const claimOnly: string[] = [];
-  const sourceOnlySet = new Set<string>();
-  const contextValidatedSourceNumbers = new Set<string>();
-
-  const sourceFragments = extractClaims(source);
-  sourceFragments.forEach(fragment => {
-    const fragmentEntities = extractEntities(fragment);
-    const fragmentNumbers = extractNumbers(fragment);
-    fragmentNumbers.forEach(n => sourceOnlySet.add(n));
-
-    const hasOverlap = claimEntities.some(ce =>
-      fragmentEntities.some(fe => fe.toLowerCase() === ce.toLowerCase())
-    );
-    if (hasOverlap || claimEntities.length === 0) {
-      fragmentNumbers.forEach(n => contextValidatedSourceNumbers.add(normalizeNumber(n)));
-    }
-  });
 
   const claimNumbersNorm = claimNumbers.map(n => normalizeNumber(n));
 
@@ -489,7 +523,7 @@ export function compareNumbers(claim: string, source: string): NumberComparison 
     }
   });
 
-  const sourceOnly = Array.from(sourceOnlySet).filter(
+  const sourceOnly = Array.from(allSourceNumbers).filter(
     num => !claimNumbersNorm.includes(normalizeNumber(num))
   );
 
@@ -519,26 +553,12 @@ export function verifyClaimAgainstSource(
 
   let totalEntityMatches = 0;
   const allSourceEntities = new Set<string>();
-  const allSourceNumbers = new Set<string>();
-  const contextValidatedSourceNumbers = new Set<string>();
 
   sources.forEach(source => {
     extractEntities(source).forEach(e => allSourceEntities.add(e));
-
-    const sourceFragments = extractClaims(source);
-    sourceFragments.forEach(fragment => {
-      const fragmentEntities = extractEntities(fragment);
-      const fragmentNumbers = extractNumbers(fragment);
-      fragmentNumbers.forEach(n => allSourceNumbers.add(n));
-
-      const hasOverlap = claimEntities.some(ce =>
-        fragmentEntities.some(fe => fe.toLowerCase() === ce.toLowerCase())
-      );
-      if (hasOverlap || claimEntities.length === 0) {
-        fragmentNumbers.forEach(n => contextValidatedSourceNumbers.add(normalizeNumber(n)));
-      }
-    });
   });
+
+  const { contextValidatedSourceNumbers, allSourceNumbers } = getContextValidatedNumbers(claimEntities, sources);
 
   const sourceEntitiesArr = Array.from(allSourceEntities);
   claimEntities.forEach(entity => {

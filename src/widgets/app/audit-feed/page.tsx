@@ -904,7 +904,7 @@ export default function AuditFeed() {
   // Sync to localStorage whenever historyData changes
   useEffect(() => {
     if (mounted && historyData && historyData.length > 0) {
-      localStorage.setItem('halluno-audits', JSON.stringify(historyData));
+      localStorage.setItem('verifai-audits', JSON.stringify(historyData));
     }
   }, [historyData, mounted]);
 

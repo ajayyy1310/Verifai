@@ -1,33 +1,8 @@
-import { ToolDecorator as Tool, ResourceDecorator as Resource, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, ResourceDecorator as Resource, ExecutionContext, z, Injectable } from '@nitrostack/core';
 import { randomUUID } from 'crypto';
 import { computeTrustScore, extractClaims, extractNumbers, normalizeNumber } from './verifier.js';
-
-// In-memory audit store
-const auditStore: Map<string, AuditRecord> = new Map();
-
-interface AuditRecord {
-  id: string;
-  agentOutput: string;
-  sources: string[];
-  trustScore: number;
-  verdict: 'PASS' | 'BLOCK' | 'FLAG';
-  mismatches: Mismatch[];
-  timestamp: string;
-  imageUrl?: string;
-  sourceConflict?: string;
-  claims?: Array<{
-    claim: string;
-    status: 'supported' | 'partial' | 'unsupported';
-    score: number;
-    entityOverlap: number;
-  }>;
-}
-
-interface Mismatch {
-  claim: string;
-  sourceText: string;
-  issue: string;
-}
+import { AuditRecord, Mismatch, Claim } from '../../shared/types.js';
+import { AuditStoreService } from '../shared/audit-store.service.js';
 
 // Map mock document reference names/URIs to their actual contents
 function resolveSource(source: string): string {
@@ -93,33 +68,16 @@ function detectSourceConflicts(sources: string[]): string | null {
   return null;
 }
 
+@Injectable({ deps: [AuditStoreService] })
 export class AuditTools {
+  constructor(private readonly auditStore: AuditStoreService) {}
+
   @Tool({
     name: 'audit_response',
-    description: `Audit an AI agent response against source documents and compute a trust score (0–100).
-
-MANDATORY RULE: You MUST call this tool IMMEDIATELY for ANY of the following user messages — do NOT answer conversationally or ask for clarification first:
-
-CONCRETE EXAMPLES — call the tool exactly as shown:
-• "Can you check if this is right? The agent said something about our policy."
-  → CALL: audit_response({ agentOutput: "something about our policy", sources: [] })
-• "Audit this: ''"
-  → CALL: audit_response({ agentOutput: "", sources: [] })
-• "Check this warranty claim: 'Coverage lasts 2 years'" against warranty_terms.pdf
-  → CALL: audit_response({ agentOutput: "Coverage lasts 2 years", sources: ["warranty_terms.pdf"] })
-• "Verify: 'Employees get 20 vacation days'"
-  → CALL: audit_response({ agentOutput: "Employees get 20 vacation days", sources: [] })
-
-The tool handles ALL cases internally:
-- Empty/null agentOutput → returns error with undefined trust score
-- Vague/unclear input → returns low-confidence BLOCK with clarification prompt
-- No sources → returns BLOCK explaining what documents are needed
-- Valid input → returns trust score 0-100 with verdict PASS/FLAG/BLOCK
-
-NEVER list available resources or ask for clarification. Extract whatever text the user provides and call this tool immediately.`,
+    description: 'Call this tool to audit any AI agent response or statement, including vague statements like "something about our policy". Extract the quoted statement or whatever text the user refers to as agentOutput, and pass available source names as sources. If no sources are mentioned, pass an empty array. Do not ask the user for clarification — call this tool and it will explain what information is missing in its response.',
     inputSchema: z.object({
-      agentOutput: z.string().describe('The AI agent output or statement to audit. Pass as-is, even if empty or vague. Extract from user message if needed.'),
-      sources: z.array(z.string()).describe('Source documents or reference names. Pass empty array [] if none provided.'),
+      agentOutput: z.string().describe('The statement or text to audit. Extract from user message even if vague (e.g. "something about our policy").'),
+      sources: z.array(z.string()).describe('Source document names or URIs. Use [] if none mentioned.'),
     }),
   })
 
@@ -133,12 +91,7 @@ NEVER list available resources or ask for clarification. Extract whatever text t
     mismatches: Array<{ claim: string; sourceText: string; issue: string }>;
     timestamp: string;
     sourceConflict: string | undefined;
-    claims: Array<{
-      claim: string;
-      status: 'supported' | 'partial' | 'unsupported';
-      score: number;
-      entityOverlap: number;
-    }>;
+    claims: Claim[];
   }> {
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
@@ -165,7 +118,7 @@ NEVER list available resources or ask for clarification. Extract whatever text t
         claims: [],
       };
 
-      auditStore.set(auditId, emptyOutputRecord);
+      this.auditStore.add(emptyOutputRecord);
 
       return {
         auditId,
@@ -208,7 +161,7 @@ NEVER list available resources or ask for clarification. Extract whatever text t
         claims: [],
       };
 
-      auditStore.set(auditId, vagueRecord);
+      this.auditStore.add(vagueRecord);
 
       return {
         auditId,
@@ -242,7 +195,7 @@ NEVER list available resources or ask for clarification. Extract whatever text t
         claims: [],
       };
 
-      auditStore.set(auditId, emptyRecord);
+      this.auditStore.add(emptyRecord);
 
       return {
         auditId,
@@ -290,7 +243,7 @@ NEVER list available resources or ask for clarification. Extract whatever text t
       claims,
     };
 
-    auditStore.set(auditId, record);
+    this.auditStore.add(record);
 
     return {
       auditId,
@@ -324,14 +277,9 @@ If the audit ID is not found in the current session, the tool returns a helpful 
     sources: string[];
     timestamp: string;
     sourceConflict: string | undefined;
-    claims: Array<{
-      claim: string;
-      status: 'supported' | 'partial' | 'unsupported';
-      score: number;
-      entityOverlap: number;
-    }>;
+    claims: Claim[];
   }> {
-    const record = auditStore.get(input.auditId);
+    const record = this.auditStore.getById(input.auditId);
 
     if (!record) {
       throw new Error(`Audit ID not found: '${input.auditId}'. Please check the ID or use get_audit_log to find valid audit IDs within a date range.`);
