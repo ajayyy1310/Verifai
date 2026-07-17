@@ -53,13 +53,42 @@ export class AuditTools {
       entityOverlap: number;
     }>;
   }> {
+    const auditId = randomUUID();
+    const timestamp = new Date().toISOString();
+
+    // If no sources are provided, return a low-confidence result explaining that no sources were provided
+    // and prompting the user to specify which documents or resources should be used for verification
     if (!input.sources || input.sources.length === 0) {
-      throw new Error('No sources were provided for verification. Please specify which documents or resources should be used.');
+      const emptyRecord: AuditRecord = {
+        id: auditId,
+        agentOutput: input.agentOutput,
+        sources: [],
+        trustScore: 0,
+        verdict: 'BLOCK',
+        mismatches: [
+          {
+            claim: 'No sources provided',
+            sourceText: 'Missing reference material.',
+            issue: "I'd be happy to help audit that AI response, but I need the source document(s) to verify it against. Please specify which documents or resources should be used for verification.",
+          }
+        ],
+        timestamp,
+        claims: [],
+      };
+
+      auditStore.set(auditId, emptyRecord);
+
+      return {
+        auditId,
+        trustScore: 0,
+        verdict: 'BLOCK',
+        mismatches: emptyRecord.mismatches,
+        timestamp,
+        claims: [],
+      };
     }
 
     const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, input.sources);
-    const auditId = randomUUID();
-    const timestamp = new Date().toISOString();
 
     const claims = claimDetails.map(c => ({
       claim: c.claim,
