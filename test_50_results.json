@@ -162,12 +162,12 @@
     "agent": "Google built a new campus and hired 500 engineers.",
     "source": "Google built a new campus. It hired 200 engineers.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
     "mismatches": [
       {
-        "claim": "Google built a new campus and hired 500 engineers",
+        "claim": "hired 500 engineers",
         "sourceText": "Google built a new campus. It hired 200 engineers.",
         "issue": "Numbers in claim (500) not found in sources"
       }
@@ -180,16 +180,10 @@
     "agent": "Growth was .5%.",
     "source": "Growth was 0.5%.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Growth was",
-        "sourceText": "Growth was 0.5%.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 16,
@@ -198,9 +192,9 @@
     "agent": "Revenues grew by 5%.",
     "source": "Revenues grew by 10%. We had 5 new products.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "Revenues grew by 5%",
@@ -228,14 +222,14 @@
     "agent": "100 million users.",
     "source": "100 billion users.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "100 million users",
         "sourceText": "100 billion users.",
-        "issue": "Numbers in claim (100 million) not found in sources"
+        "issue": "Numbers in claim (100 m) not found in sources"
       }
     ]
   },
@@ -246,9 +240,9 @@
     "agent": "1,234,567 dollars.",
     "source": "1234567 dollars.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "PASS",
+    "actualVerdict": "FLAG",
     "score": 1,
-    "passed": false,
+    "passed": true,
     "mismatches": []
   },
   {
@@ -258,16 +252,10 @@
     "agent": "High revenue growth.",
     "source": "Revenue grew 50%.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "High revenue growth",
-        "sourceText": "Revenue grew 50%.",
-        "issue": "Low entity overlap (33%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 21,
@@ -279,7 +267,13 @@
     "actualVerdict": "BLOCK",
     "score": 0,
     "passed": true,
-    "mismatches": []
+    "mismatches": [
+      {
+        "claim": "Wow",
+        "sourceText": "Revenue grew 50%.",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
   },
   {
     "id": 22,
@@ -295,7 +289,7 @@
       {
         "claim": "It is the",
         "sourceText": "It is the company.",
-        "issue": "Low entity overlap (30%)"
+        "issue": "Low entity overlap (0%)"
       }
     ]
   },
@@ -313,7 +307,7 @@
       {
         "claim": "Microsoft",
         "sourceText": "Microsoft grew 5%.",
-        "issue": "Low entity overlap (30%)"
+        "issue": "Claim not supported by sources"
       }
     ]
   },
@@ -324,16 +318,10 @@
     "agent": "Microsoft 5",
     "source": "Microsoft grew 5%.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Microsoft 5",
-        "sourceText": "Microsoft grew 5%.",
-        "issue": "Numbers in claim (5) not found in sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 25,
@@ -342,10 +330,16 @@
     "agent": "He won 500.",
     "source": "She won 500.",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": false,
-    "mismatches": []
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "He won 500",
+        "sourceText": "She won 500.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   },
   {
     "id": 26,
@@ -354,16 +348,10 @@
     "agent": "A is 1. B is 2.",
     "source": "A is 1.\nB is 2.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "FLAG",
-    "score": 0.5,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A is 1",
-        "sourceText": "A is 1. | B is 2.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 27,
@@ -396,12 +384,12 @@
     "agent": "X is 10 and Y is 20.",
     "source": "X is 10.\nY is 15.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
     "mismatches": [
       {
-        "claim": "X is 10 and Y is 20",
+        "claim": "Y is 20",
         "sourceText": "X is 10. | Y is 15.",
         "issue": "Numbers in claim (20) not found in sources"
       }
@@ -498,10 +486,16 @@
     "agent": "He visited Paris and London.",
     "source": "He visited Paris.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": false,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "He visited Paris and London",
+        "sourceText": "He visited Paris.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   },
   {
     "id": 36,
@@ -510,16 +504,10 @@
     "agent": "U.S. GDP is 5%.",
     "source": "US GDP is 5%.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "U.S. GDP is 5%",
-        "sourceText": "US GDP is 5%.",
-        "issue": "Low entity overlap (33%)"
-      }
-    ]
+    "actualVerdict": "FLAG",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 37,
@@ -533,9 +521,9 @@
     "passed": true,
     "mismatches": [
       {
-        "claim": "fifty percent",
+        "claim": "50 percent",
         "sourceText": "50%.",
-        "issue": "Low entity overlap (0%)"
+        "issue": "Numbers in claim (50) not found in sources"
       }
     ]
   },
@@ -546,16 +534,10 @@
     "agent": "Jan 1, 2024.",
     "source": "January 1st, 2024.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Jan 1, 2024",
-        "sourceText": "January 1st, 2024.",
-        "issue": "Numbers in claim (1, 2024) not found in sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 39,
@@ -588,15 +570,10 @@
     "agent": "A is 1; B is 2.",
     "source": "A is 1.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
     "mismatches": [
-      {
-        "claim": "A is 1",
-        "sourceText": "A is 1.",
-        "issue": "Low entity overlap (30%)"
-      },
       {
         "claim": "B is 2",
         "sourceText": "A is 1.",
@@ -611,21 +588,10 @@
     "agent": "Results: A is 1.",
     "source": "A is 1.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Results",
-        "sourceText": "A is 1.",
-        "issue": "Low entity overlap (0%)"
-      },
-      {
-        "claim": "A is 1",
-        "sourceText": "A is 1.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 43,
@@ -635,7 +601,7 @@
     "source": "It rained heavily. The roads flooded.",
     "expectedVerdict": "FLAG",
     "actualVerdict": "FLAG",
-    "score": 0.6666666666666666,
+    "score": 0.5,
     "passed": true,
     "mismatches": [
       {
@@ -712,10 +678,16 @@
     "agent": "10.0.",
     "source": "10.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
-    "mismatches": []
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "10.0",
+        "sourceText": "10.",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
   },
   {
     "id": 49,
@@ -724,16 +696,10 @@
     "agent": "End.Start.",
     "source": "End. Start.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Start",
-        "sourceText": "End. Start.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 50,

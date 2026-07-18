@@ -5,9 +5,9 @@
     "agent": "Revenues reached 50%.",
     "source": "Costs increased by 50%. Revenues are stable.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "Revenues reached 50%",
@@ -33,10 +33,16 @@
     "agent": "It cost $1000.",
     "source": "It cost 1000 Euros.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": false,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "It cost $1000",
+        "sourceText": "It cost 1000 Euros.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   },
   {
     "id": 4,
@@ -44,10 +50,21 @@
     "agent": "A is 10 and B is 20.",
     "source": "A is 20 and B is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": true,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "A is 10",
+        "sourceText": "A is 20 and B is 10.",
+        "issue": "Numbers in claim (10) not found in sources"
+      },
+      {
+        "claim": "B is 20",
+        "sourceText": "A is 20 and B is 10.",
+        "issue": "Numbers in claim (20) not found in sources"
+      }
+    ]
   },
   {
     "id": 5,
@@ -88,9 +105,9 @@
     "agent": "Launch in 2024.",
     "source": "Founded in 2024. No launch date.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "Launch in 2024",
@@ -112,7 +129,7 @@
       {
         "claim": "50 km",
         "sourceText": "50 miles.",
-        "issue": "Numbers in claim (50) not found in sources"
+        "issue": "Numbers in claim (50 k) not found in sources"
       }
     ]
   },
@@ -122,14 +139,14 @@
     "agent": "All 50 workers quit.",
     "source": "50 workers were hired.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "All 50 workers quit",
         "sourceText": "50 workers were hired.",
-        "issue": "Low entity overlap (33%)"
+        "issue": "Claim not supported by sources"
       }
     ]
   },
@@ -167,10 +184,16 @@
     "agent": "Sales up 10%; profits down 5%.",
     "source": "Sales up 10%. Profits up 5%.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": false,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "profits down 5%",
+        "sourceText": "Sales up 10%. Profits up 5%.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   },
   {
     "id": 14,
@@ -178,16 +201,10 @@
     "agent": "Results: 10% growth.",
     "source": "Growth was 10%.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "FLAG",
-    "score": 0.5,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Results",
-        "sourceText": "Growth was 10%.",
-        "issue": "Low entity overlap (0%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 15,
@@ -195,16 +212,10 @@
     "agent": "Items: A, B, and C.",
     "source": "Items include A and B. C is excluded.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "FLAG",
-    "score": 0.5,
-    "passed": true,
-    "mismatches": [
-      {
-        "claim": "Items",
-        "sourceText": "Items include A and B. C is excluded.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
   },
   {
     "id": 16,
@@ -212,21 +223,10 @@
     "agent": "It rained but we played and we won.",
     "source": "It rained. We played. We lost.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
+    "actualVerdict": "PASS",
+    "score": 1,
     "passed": false,
-    "mismatches": [
-      {
-        "claim": "It rained",
-        "sourceText": "It rained. We played. We lost.",
-        "issue": "Low entity overlap (30%)"
-      },
-      {
-        "claim": "we played and we won",
-        "sourceText": "It rained. We played. We lost.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "mismatches": []
   },
   {
     "id": 17,
@@ -267,16 +267,10 @@
     "agent": "The team worked hard and they built the app and they launched in 2023 and got 1000 users.",
     "source": "Team worked hard. App launched in 2023. Got 1000 users.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "FLAG",
-    "score": 0.75,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "they built the app",
-        "sourceText": "Team worked hard. App launched in 2023. Got 1000 users.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 21,
@@ -284,7 +278,7 @@
     "agent": "He works at Apple Inc. The profits are 10%.",
     "source": "He works at Apple Inc. Profits: 10%.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
     "passed": false,
     "mismatches": [
@@ -301,10 +295,16 @@
     "agent": "Dr. Smith went to the U.S. in 2024.",
     "source": "Dr. Smith went to the U.S. in 2024.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": true,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Doctor Smith went to the US in 2024",
+        "sourceText": "Dr. Smith went to the U.S. in 2024.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   },
   {
     "id": 23,
@@ -312,10 +312,16 @@
     "agent": "US GDP grew.",
     "source": "U.S. GDP grew.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": false,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0,
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "US GDP grew",
+        "sourceText": "U.S. GDP grew.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   },
   {
     "id": 24,
@@ -323,16 +329,10 @@
     "agent": "The cost is 1,000, which is high.",
     "source": "Cost is 1,000.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "The cost is 1,000, which is high",
-        "sourceText": "Cost is 1,000.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 25,
@@ -373,10 +373,16 @@
     "agent": "10-20 units.",
     "source": "10 to 20 units.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": true,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "10-20 units",
+        "sourceText": "10 to 20 units.",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
   },
   {
     "id": 29,
@@ -384,16 +390,10 @@
     "agent": "Revenue (100) increased.",
     "source": "Revenue was 100.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Revenue (100) increased",
-        "sourceText": "Revenue was 100.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 30,
@@ -412,16 +412,10 @@
     "agent": "Fifty users.",
     "source": "50 users.",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": true,
-    "mismatches": [
-      {
-        "claim": "Fifty users",
-        "sourceText": "50 users.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
   },
   {
     "id": 32,
@@ -429,16 +423,10 @@
     "agent": "50M users.",
     "source": "50 million users.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
+    "actualVerdict": "PASS",
+    "score": 1,
     "passed": false,
-    "mismatches": [
-      {
-        "claim": "50M users",
-        "sourceText": "50 million users.",
-        "issue": "Numbers in claim (50) not found in sources"
-      }
-    ]
+    "mismatches": []
   },
   {
     "id": 33,
@@ -463,9 +451,9 @@
     "agent": "05 users.",
     "source": "5 users.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "05 users",
@@ -480,14 +468,14 @@
     "agent": "5.00%",
     "source": "5%",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "5.00%",
         "sourceText": "5%",
-        "issue": "Numbers in claim (5.00%) not found in sources"
+        "issue": "Low entity overlap (0%)"
       }
     ]
   },
@@ -497,14 +485,14 @@
     "agent": "1,000.50",
     "source": "1000.5",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "1,000.50",
         "sourceText": "1000.5",
-        "issue": "Numbers in claim (1,000.50) not found in sources"
+        "issue": "Low entity overlap (0%)"
       }
     ]
   },
@@ -514,10 +502,16 @@
     "agent": "€100",
     "source": "$100",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
-    "mismatches": []
+    "passed": true,
+    "mismatches": [
+      {
+        "claim": "€100",
+        "sourceText": "$100",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
   },
   {
     "id": 38,
@@ -547,14 +541,14 @@
     "agent": "1000000",
     "source": "1,000,000",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
     "passed": false,
     "mismatches": [
       {
         "claim": "1000000",
         "sourceText": "1,000,000",
-        "issue": "Low entity overlap (30%)"
+        "issue": "Low entity overlap (0%)"
       }
     ]
   },
@@ -575,16 +569,10 @@
     "agent": "A is 10, B is 20, C is 30.",
     "source": "A is 10.\nB is 20.\nC is 30.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A is 10, B is 20, C is 30",
-        "sourceText": "A is 10.\nB is 20.\nC is 30.",
-        "issue": "Numbers in claim (10) not found in sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 43,
@@ -599,7 +587,7 @@
       {
         "claim": "A is 10, B is 20, C is 30",
         "sourceText": "A is 10.\nB is 20.\nC is 40.",
-        "issue": "Numbers in claim (10, 30) not found in sources"
+        "issue": "Numbers in claim (30) not found in sources"
       }
     ]
   },
@@ -609,16 +597,10 @@
     "agent": "Stock price is 150.",
     "source": "Stock was 100.\nStock is 150 now.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Stock price is 150",
-        "sourceText": "Stock was 100.\nStock is 150 now.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 45,
@@ -676,9 +658,9 @@
     "agent": "X is 10.",
     "source": "Y is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nY is 1.\nX is 5.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\nZ is 2.\n",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": true,
+    "passed": false,
     "mismatches": [
       {
         "claim": "X is 10",
@@ -711,7 +693,7 @@
       {
         "claim": "A B C D",
         "sourceText": "A B X Y",
-        "issue": "Low entity overlap (33%)"
+        "issue": "Claim not supported by sources"
       }
     ]
   },
@@ -721,7 +703,7 @@
     "agent": "A B C D E",
     "source": "A B C X Y",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
     "passed": false,
     "mismatches": [
@@ -738,9 +720,9 @@
     "agent": "A B",
     "source": "A B",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
     "mismatches": []
   },
   {
@@ -749,9 +731,9 @@
     "agent": "A 10",
     "source": "A 10",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
     "mismatches": []
   },
   {
@@ -767,7 +749,7 @@
       {
         "claim": "Hello",
         "sourceText": "Hello world",
-        "issue": "Low entity overlap (30%)"
+        "issue": "Claim not supported by sources"
       }
     ]
   },
@@ -777,9 +759,9 @@
     "agent": "10",
     "source": "10",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": true,
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
     "mismatches": []
   },
   {
@@ -788,14 +770,14 @@
     "agent": "The and of it is 10.",
     "source": "It is 10.",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": true,
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": false,
     "mismatches": [
       {
-        "claim": "The and of it is 10",
+        "claim": "The",
         "sourceText": "It is 10.",
-        "issue": "Low entity overlap (30%)"
+        "issue": "Low entity overlap (0%)"
       }
     ]
   },
@@ -805,16 +787,10 @@
     "agent": "A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A  10.",
     "source": "A 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A  10",
-        "sourceText": "A 10.",
-        "issue": "Numbers in claim (10) not found in sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 59,
@@ -825,7 +801,13 @@
     "actualVerdict": "BLOCK",
     "score": 0,
     "passed": true,
-    "mismatches": []
+    "mismatches": [
+      {
+        "claim": "A",
+        "sourceText": "B",
+        "issue": "Low entity overlap (0%)"
+      }
+    ]
   },
   {
     "id": 60,
@@ -861,9 +843,9 @@
     "agent": "\"10\"",
     "source": "10",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": true,
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
     "mismatches": []
   },
   {
@@ -872,16 +854,10 @@
     "agent": "A.I. is 10.",
     "source": "AI is 10.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "is 10",
-        "sourceText": "AI is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "FLAG",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 64,
@@ -889,16 +865,10 @@
     "agent": "A_B is 10.",
     "source": "A B is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A_B is 10",
-        "sourceText": "A B is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 65,
@@ -939,9 +909,9 @@
     "agent": "A=10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
     "mismatches": []
   },
   {
@@ -950,16 +920,10 @@
     "agent": "[A] is 10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "[A] is 10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 70,
@@ -967,16 +931,10 @@
     "agent": "A™ is 10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A™ is 10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 71,
@@ -984,16 +942,10 @@
     "agent": "A is not 10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A is not 10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 72,
@@ -1015,7 +967,13 @@
     "actualVerdict": "BLOCK",
     "score": 0,
     "passed": true,
-    "mismatches": []
+    "mismatches": [
+      {
+        "claim": "10",
+        "sourceText": "100",
+        "issue": "Numbers in claim (10) not found in sources"
+      }
+    ]
   },
   {
     "id": 74,
@@ -1023,16 +981,10 @@
     "agent": "Pre-A is 10.",
     "source": "A is 10.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
+    "actualVerdict": "PASS",
+    "score": 1,
     "passed": false,
-    "mismatches": [
-      {
-        "claim": "Pre-A is 10",
-        "sourceText": "A is 10.",
-        "issue": "Numbers in claim (10) not found in sources"
-      }
-    ]
+    "mismatches": []
   },
   {
     "id": 75,
@@ -1040,16 +992,10 @@
     "agent": "A-ing is 10.",
     "source": "A is 10.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
+    "actualVerdict": "PASS",
+    "score": 1,
     "passed": false,
-    "mismatches": [
-      {
-        "claim": "A-ing is 10",
-        "sourceText": "A is 10.",
-        "issue": "Numbers in claim (10) not found in sources"
-      }
-    ]
+    "mismatches": []
   },
   {
     "id": 76,
@@ -1057,16 +1003,10 @@
     "agent": "Non-profit is 10.",
     "source": "Profit is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "Non-profit is 10",
-        "sourceText": "Profit is 10.",
-        "issue": "Claim not supported by sources"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 77,
@@ -1074,16 +1014,10 @@
     "agent": "A jumped 10.",
     "source": "A jumps 10.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
+    "actualVerdict": "PASS",
+    "score": 1,
     "passed": false,
-    "mismatches": [
-      {
-        "claim": "A jumped 10",
-        "sourceText": "A jumps 10.",
-        "issue": "Numbers in claim (10) not found in sources"
-      }
-    ]
+    "mismatches": []
   },
   {
     "id": 78,
@@ -1091,16 +1025,10 @@
     "agent": "Apples are 10.",
     "source": "Apple is 10.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
+    "actualVerdict": "PASS",
+    "score": 1,
     "passed": false,
-    "mismatches": [
-      {
-        "claim": "Apples are 10",
-        "sourceText": "Apple is 10.",
-        "issue": "Numbers in claim (10) not found in sources"
-      }
-    ]
+    "mismatches": []
   },
   {
     "id": 79,
@@ -1125,7 +1053,7 @@
     "agent": "The 10 was good.",
     "source": "The movie was good. Rating 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
     "passed": false,
     "mismatches": [
@@ -1143,14 +1071,9 @@
     "source": "A is 1. B is 2. C is 3. D is 4. E is 6.",
     "expectedVerdict": "FLAG",
     "actualVerdict": "FLAG",
-    "score": 0.6,
+    "score": 0.8,
     "passed": true,
     "mismatches": [
-      {
-        "claim": "A is 1",
-        "sourceText": "A is 1. B is 2. C is 3. D is 4. E is 6.",
-        "issue": "Low entity overlap (30%)"
-      },
       {
         "claim": "E is 5",
         "sourceText": "A is 1. B is 2. C is 3. D is 4. E is 6.",
@@ -1164,15 +1087,10 @@
     "agent": "A is 1. B is 2. C is 3. D is 4. E is 5.",
     "source": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0.2,
-    "passed": false,
+    "actualVerdict": "FLAG",
+    "score": 0.4,
+    "passed": true,
     "mismatches": [
-      {
-        "claim": "A is 1",
-        "sourceText": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
-        "issue": "Low entity overlap (30%)"
-      },
       {
         "claim": "C is 3",
         "sourceText": "A is 1. B is 2. X is 0. Y is 0. Z is 0.",
@@ -1197,9 +1115,30 @@
     "source": "A 1. X 0. Y 0. Z 0. W 0.",
     "expectedVerdict": "BLOCK",
     "actualVerdict": "BLOCK",
-    "score": 0,
+    "score": 0.2,
     "passed": true,
-    "mismatches": []
+    "mismatches": [
+      {
+        "claim": "B 2",
+        "sourceText": "A 1. X 0. Y 0. Z 0. W 0.",
+        "issue": "Numbers in claim (2) not found in sources"
+      },
+      {
+        "claim": "C 3",
+        "sourceText": "A 1. X 0. Y 0. Z 0. W 0.",
+        "issue": "Numbers in claim (3) not found in sources"
+      },
+      {
+        "claim": "D 4",
+        "sourceText": "A 1. X 0. Y 0. Z 0. W 0.",
+        "issue": "Numbers in claim (4) not found in sources"
+      },
+      {
+        "claim": "E 5",
+        "sourceText": "A 1. X 0. Y 0. Z 0. W 0.",
+        "issue": "Numbers in claim (5) not found in sources"
+      }
+    ]
   },
   {
     "id": 84,
@@ -1235,16 +1174,10 @@
     "agent": "A is 10.   ",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A is 10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 87,
@@ -1252,16 +1185,10 @@
     "agent": "A is \n 10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A is \n 10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 88,
@@ -1269,16 +1196,10 @@
     "agent": "A   is    10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A   is    10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 89,
@@ -1286,16 +1207,10 @@
     "agent": "10 is A.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "10 is A",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 90,
@@ -1303,16 +1218,10 @@
     "agent": "A is 10.",
     "source": "A is 10.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
-    "mismatches": [
-      {
-        "claim": "A is 10",
-        "sourceText": "A is 10.",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": true,
+    "mismatches": []
   },
   {
     "id": 91,
@@ -1331,15 +1240,10 @@
     "agent": "A is 10; B is 20.",
     "source": "A is 10.\nC is 20.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": false,
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": true,
     "mismatches": [
-      {
-        "claim": "A is 10",
-        "sourceText": "A is 10.\nC is 20.",
-        "issue": "Low entity overlap (30%)"
-      },
       {
         "claim": "B is 20",
         "sourceText": "A is 10.\nC is 20.",
@@ -1358,9 +1262,9 @@
     "passed": false,
     "mismatches": [
       {
-        "claim": "U.S. GDP is 1,000 billion",
+        "claim": "US GDP is 1,000 billion",
         "sourceText": "U.S. GDP is 1000 million.",
-        "issue": "Numbers in claim (1,000 billion) not found in sources"
+        "issue": "Numbers in claim (1,000 b) not found in sources"
       }
     ]
   },
@@ -1381,19 +1285,19 @@
     "agent": "Revenues were $10M; costs were $5M.",
     "source": "Costs were $10M. Revenues were $5M.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "BLOCK",
+    "actualVerdict": "FLAG",
     "score": 0,
-    "passed": false,
+    "passed": true,
     "mismatches": [
       {
         "claim": "Revenues were $10M",
         "sourceText": "Costs were $10M. Revenues were $5M.",
-        "issue": "Numbers in claim ($10) not found in sources"
+        "issue": "Numbers in claim ($10M) not found in sources"
       },
       {
         "claim": "costs were $5M",
         "sourceText": "Costs were $10M. Revenues were $5M.",
-        "issue": "Numbers in claim ($5) not found in sources"
+        "issue": "Numbers in claim ($5M) not found in sources"
       }
     ]
   },
@@ -1420,14 +1324,14 @@
     "agent": "He went to the U.S. and saw Dr. X.",
     "source": "He went to U.S.",
     "expectedVerdict": "FLAG",
-    "actualVerdict": "FLAG",
-    "score": 0.5,
-    "passed": true,
+    "actualVerdict": "BLOCK",
+    "score": 0,
+    "passed": false,
     "mismatches": [
       {
-        "claim": "saw Dr. X",
+        "claim": "He went to the US and saw Doctor X",
         "sourceText": "He went to U.S.",
-        "issue": "Low entity overlap (0%)"
+        "issue": "Low entity overlap (40%)"
       }
     ]
   },
@@ -1442,9 +1346,9 @@
     "passed": true,
     "mismatches": [
       {
-        "claim": "5 million",
+        "claim": ".5 million",
         "sourceText": "0.5 million.",
-        "issue": "Numbers in claim (5 million) not found in sources"
+        "issue": "Numbers in claim (.5 m) not found in sources"
       }
     ]
   },
@@ -1454,16 +1358,10 @@
     "agent": "'10.5%'",
     "source": "10.5%",
     "expectedVerdict": "BLOCK",
-    "actualVerdict": "BLOCK",
-    "score": 0,
-    "passed": true,
-    "mismatches": [
-      {
-        "claim": "'10.5%'",
-        "sourceText": "10.5%",
-        "issue": "Low entity overlap (30%)"
-      }
-    ]
+    "actualVerdict": "PASS",
+    "score": 1,
+    "passed": false,
+    "mismatches": []
   },
   {
     "id": 100,
@@ -1471,9 +1369,15 @@
     "agent": "Dr. Smith, U.S. CEO of Apple Inc., raised $1,234.56 in 2024; however he lost $500.",
     "source": "Apple Inc. CEO Dr. Smith raised 1234.56 dollars in the U.S. during 2024. He lost 500.",
     "expectedVerdict": "PASS",
-    "actualVerdict": "PASS",
-    "score": 1,
-    "passed": true,
-    "mismatches": []
+    "actualVerdict": "FLAG",
+    "score": 0.5,
+    "passed": false,
+    "mismatches": [
+      {
+        "claim": "Doctor Smith, US CEO of Apple Inc., raised $1,234.56 in 2024",
+        "sourceText": "Apple Inc. CEO Dr. Smith raised 1234.56 dollars in the U.S. during 2024. He lost 500.",
+        "issue": "Claim not supported by sources"
+      }
+    ]
   }
 ]
