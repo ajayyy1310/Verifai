@@ -2,162 +2,135 @@
 
 **AI Hallucination Detection & Trust Scoring MCP Server**
 
-Verifai is a Model Context Protocol (MCP) server that detects and scores AI-generated hallucinations by comparing agent outputs against verified sources. It provides deterministic trust scoring, detailed mismatch analysis, and audit trail tracking.
+Verifai is a Model Context Protocol (MCP) server designed to detect, analyze, and score AI-generated hallucinations. By comparing agent statements against verified reference sources, Verifai computes deterministic trust scores, flags factual contradictions, and provides structured correction reports with citations.
+
+---
 
 ## Features
 
-- **Hallucination Detection** — Compare AI agent outputs against source material
-- **Trust Scoring** — Deterministic 0.0–1.0 trust scores with PASS, FLAG, and BLOCK verdicts
-- **Context-Aware Matching** — Advanced verification engine that enforces contextual entity overlap to prevent false positive number hallucination matches
-- **Audit Logging** — Track all audits with timestamps, verdicts, and detailed mismatches
-- **Trust Dashboard** — Aggregate statistics: pass rate, average score, trend analysis
-- **Source Citation** — Detailed factual issue reports with source references
+- **Factual Hallucination Auditing** — Compares AI agent outputs against authoritative source material.
+- **Deterministic Trust Scoring** — Generates precise `0.0–1.0` (mapped to `0%–100%`) trust scores with `PASS`, `FLAG`, or `BLOCK` verdicts.
+- **Context-Aware Verification Engine** — Splits statements into fine-grained claims, enforces context-aware number matching, and resolves unit/currency differences.
+- **Source Conflict Detection** — Alerts downstream consumers if reference documents contain contradictory statistics.
+- **Audit Logging & Analytics** — Stores and manages audit history with claim-level breakdowns, Jaccard similarities, and entity overlap metrics.
+- **Visual Analytics Dashboard** — Includes built-in widgets for real-time visualization of trust statistics, gauges, and historical trends.
+
+---
 
 ## Architecture
 
-### Modules
-
-- **`verify`** — Core hallucination detection
-  - `verifier.ts` — Engine handling sentence fragmentation, number normalization, abbreviation protection, context-aware extraction, and scoring logic
-  - `audit_response` — Score agent output against sources
-  - `explain_audit` — Detailed mismatch analysis with citations
-
-- **`history`** — Audit tracking & analytics
-  - `get_audit_log` — Retrieve audits by date range with claims analysis
-  - `get_trust_summary` — Aggregate trust metrics & trends
-
-### Tools
-
-| Tool | Input | Output |
-|------|-------|--------|
-| `audit_response` | `agentOutput`, `sources[]` | `trustScore`, `verdict`, `mismatches[]` |
-| `explain_audit` | `auditId` | Detailed factual issues with source citations |
-| `get_audit_log` | `startDate?`, `endDate?` | Audit cards array with claims, Jaccard similarity, entity overlap |
-| `get_trust_summary` | — | `totalAudits`, `passCount`, `passRate`, `avgScore`, `trend` |
-
-### Widgets
-
-- **`audit-feed`** — Renders audit log cards with verdicts, timestamps, and trust scores
-- **`trust-dashboard`** — Displays aggregate statistics, gauge visualization, and trend sparkline
-
-## Quick Start
-
-```bash
-npm install
-npm run dev
-```
-
-The MCP server will start and register all tools, resources, and widgets with NitroStack Studio.
-
-## Common Commands
-
-```bash
-npm run dev          # Start dev server
-npm run build        # Build for production
-npm start            # Build and start
-npm run start:prod   # Start production build
-npm run upgrade      # Upgrade NitroStack CLI
-npm run install:all  # Install all dependencies
-npm run widget       # Manage widget dependencies
-```
-
-## Project Structure
-
 ```
 src/
-├── app.module.ts           # Root module (registers verify and history modules)
-├── index.ts                # MCP server entry point
-├── modules/
-│   ├── verify/             # Hallucination detection
-│   │   ├── verify.module.ts
-│   │   └── audit.tools.ts
-│   └── history/            # Audit tracking
-│       ├── history.module.ts
-│       └── history.tools.ts
+├── index.ts                 # MCP Server entrypoint (STDIO transport)
+├── app.module.ts            # Root NitroStack module
+├── shared/
+│   └── types.ts             # Common interfaces (AuditRecord, Claim, Mismatch)
 ├── health/
-│   └── system.health.ts    # System health check
-└── widgets/
-    └── app/
-        ├── audit-feed/     # Audit log widget
-        └── trust-dashboard/ # Statistics widget
-
-fixtures/
-└── audits.json             # Sample audit data (12 audits, 75% pass rate)
+│   └── system.health.ts     # Resource health monitoring (Memory, CPU, Disk)
+└── modules/
+    ├── shared/
+    │   ├── shared.module.ts
+    │   └── audit-store.service.ts # JSON-file database persistence (fixtures/live_audits.json)
+    ├── verify/              # Hallucination Verification Engine
+    │   ├── verify.module.ts
+    │   ├── audit.tools.ts   # Tool handlers (audit_response, explain_audit) & resources
+    │   ├── verify.prompts.ts # Prompt template (audit_report)
+    │   ├── verifier.ts      # Core verification, extraction, and comparison logic
+    │   └── verifier.test.ts # Verifier test suite
+    └── history/             # Logs & Dashboard Metrics
+        ├── history.module.ts
+        └── history.tools.ts # Tool handlers (get_audit_log, get_trust_summary)
 ```
 
-## Fixture Data
+---
 
-The project includes 12 sample audits with rich claims analysis:
-- **9 PASS verdicts** (75%) — Accurate agent outputs with high Jaccard similarity (0.82–0.93)
-- **3 BLOCK verdicts** (25%) — Hallucinations with detailed mismatches and low similarity (0.35–0.42)
-  - Water boiling point error (50°C vs 100°C)
-  - Oxygen percentage overestimation (50% vs 21%)
-  - Amazon oxygen production hallucination (80% vs 20%)
+## Technical Specifications
 
-Each audit includes:
-- `claims[]` — Array of claim-to-source mappings
-- `jaccard` — Jaccard similarity coefficient (0.0–1.0)
-- `entityOverlap` — Entity overlap ratio (0.0–1.0)
-- `score` — Claim-level trust score
-- `status` — 'supported', 'contradicted', or 'unsupported'
+### 1. Factual Verification Engine (`verifier.ts`)
+The verifier performs several key stages to check factual alignment without relying on expensive LLM calls:
+* **Text Normalization**: Standardizes whitespace, collapses acronym periods (e.g., `U.S.` to `US`), resolves month names (e.g., `Dec` to `December`), maps written numbers to digits (e.g., `fifty` to `50`), and translates mathematical symbols (`=`, `&`, `+`).
+* **Claim Splitting**: Extracts fine-grained claims from agent outputs by splitting on sentence boundaries, colons, semicolons, and independent clause conjunctions (`but`, `however`, `and` followed by a subject-verb sequence).
+* **Context-Aware Number Validation**: Extracts and compares numbers strictly (no tolerance for mismatches). Preserves sentence-level source contexts to prevent false positives when matching numbers across multiple items.
+* **Semantic Analysis**:
+  * **Semantic Contradictions**: Detects opposite movements using predefined antonym sets (e.g., `grew` vs `declined`, `buy` vs `sell`).
+  * **Unit & Currency Swaps**: Detects unit/currency mismatches (e.g., `$1000` vs `1000 Euros` or `50 km` as `50 miles`).
+  * **Proper Noun Mismatches**: Validates proper nouns in claims against normalized source references to catch fabricated names and places.
+  * **Pronoun Alignment**: Flags mismatches in gendered pronouns (`he`/`she`) between claims and reference contexts.
 
-## Testing
+### 2. Exposed MCP Tools
 
-Use NitroStack Studio to test tools and widgets:
+| Tool Name | Description | Inputs | Key Outputs |
+|:---|:---|:---|:---|
+| [`audit_response`](file:///c:/Users/RAJNANDHNI/nitroprojects/Verifai/src/modules/verify/audit.tools.ts#L91) | Performs a factual alignment audit on a statement. | `agentOutput: string`, `sources: string[]` | `auditId`, `trustScore`, `verdict`, `mismatches[]` |
+| [`explain_audit`](file:///c:/Users/RAJNANDHNI/nitroprojects/Verifai/src/modules/verify/audit.tools.ts#L293) | Returns detailed factual mismatches and source citations for an audit. | `auditId: string` | Detailed mismatch array and claim metrics |
+| [`get_audit_log`](file:///c:/Users/RAJNANDHNI/nitroprojects/Verifai/src/modules/history/history.tools.ts#L23) | Retrieves historical audit logs within a date range. | `startDate: string`, `endDate: string` | Audits array with Jaccard and entity overlap metrics |
+| [`get_trust_summary`](file:///c:/Users/RAJNANDHNI/nitroprojects/Verifai/src/modules/history/history.tools.ts#L79) | Computes aggregate trust stats & daily trend metrics. | — | Pass rate, average score, min/max score, trends |
 
-1. **Audit Response** — `audit_response` tool with sample agent output and sources
-2. **Explain Audit** — `explain_audit` tool with audit ID (e.g., `audit_003`)
-3. **Audit Feed** — `get_audit_log` tool renders `audit-feed` widget with date range
-4. **Trust Dashboard** — `get_trust_summary` tool renders `trust-dashboard` widget
+### 3. Exposed MCP Resources
+* `resource://return_policy_official_document` — Returns the official return guidelines (30 days limit).
+* `resource://product_specs_datasheet` — Detailed specifications for Model X (16GB RAM, 512GB SSD).
+* `resource://user_manual_draft` — Draft manual for Model X battery life (up to 10 hours).
+* `resource://source_report_a` — Financial performance report Q3 (revenue of $15 million).
+* `resource://source_report_b` — Financial performance report Q3 (12% margin, $1.8 million profit).
 
-## Development
+---
 
-### Adding New Audits
+## Exposed MCP Widgets
 
-Edit `src/modules/history/history.tools.ts` to add new audit records with claims analysis.
+NitroStack visual widgets are built with React and tailwind to render directly in compatible MCP clients:
 
-### Extending Scoring Logic
+1. **`audit-feed`** (linked to `get_audit_log`)
+   - Displays scrollable lists of past audits.
+   - Highlights trust scores, verdicts (`PASS`, `FLAG`, `BLOCK`), claim-level statuses, and visual cards.
+2. **`trust-dashboard`** (linked to `get_trust_summary`)
+   - Renders a score gauge, pass/block counts, average trust score, and historical trend sparklines.
 
-Modify `src/modules/verify/audit.tools.ts` to adjust trust score calculation and mismatch detection.
+---
 
-### Creating New Widgets
+## Recent Improvements
 
-Use the existing `audit-feed` and `trust-dashboard` widgets as templates under `src/widgets/app/`.
+- **Sentence-Level Context Preservation**: Updated source document parsing to evaluate context on sentence boundaries rather than token/conjunction boundaries. This preserves surrounding context for labels and values (e.g. `Net profit: 155.33`), preventing false-positive number mismatches.
+- **Robust Parameter Normalization**: Made inputs in `audit_response` fully resilient. Resolves cases of empty or missing statement arguments gracefully inside the tool handler, returning a structured `BLOCK` verdict with help dialogs instead of breaking Zod validation.
+- **Proper Noun Abbreviation Alignment**: Enhanced proper noun validation to normalize source text abbreviations (e.g., matching `Dec` to `December` and `Dr.` to `Doctor`), preventing false mismatch flags.
 
-## Implementation Notes
+---
 
-### No Console Logging in Server Code
-The MCP server communicates via JSON-RPC over STDIO. Any `console.log()`, `console.error()`, or similar calls in server files (`src/**/*.ts` excluding widgets) will corrupt the protocol stream. Use `ctx.logger.info()` / `ctx.logger.error()` inside tool/resource/prompt handlers instead.
+## Getting Started
 
-### Relative Imports Must End in `.js`
-This project uses NodeNext ESM. All relative imports must include the `.js` extension:
-```typescript
-import { HistoryTools } from './history.tools.js';
-import { CalculatorModule } from './calculator/calculator.module.js';
+### Prerequisites
+- Node.js (v18+)
+- npm
+
+### Installation
+```bash
+# Install package dependencies
+npm run install:all
+
+# Compile the TypeScript files
+npm run build
 ```
 
-### Injectable Decorator for Service Injection
-When a tool/resource class injects services via constructor, use `@Injectable({ deps: [...] })`:
-```typescript
-import { Injectable } from '@nitrostack/core';
-
-@Injectable({ deps: [ConfigService] })
-export class MyTools {
-  constructor(private config: ConfigService) {}
-}
+### Running the Server
+```bash
+# Start the production server
+npm start
 ```
+
+### Running Tests
+```bash
+# Run verifier unit tests
+node dist/modules/verify/verifier.test.js
+
+# Run the 50 case verification suite
+npx tsx test_50_cases.ts
+
+# Run the 100 case edge case suite
+npx tsx test_100_cases.ts
+```
+
+---
 
 ## Links
 
-- **NitroStack Docs** — <https://docs.nitrostack.ai>
-- **MCP Specification** — <https://modelcontextprotocol.io>
-- **NitroStack Studio** — <https://nitrostack.ai/studio>
-
-## Community
-
-- Discord: <https://discord.gg/uVWey6UhuD>
-- X: <https://x.com/nitrostackai>
-- YouTube: <https://www.youtube.com/@nitrostackai>
-- LinkedIn: <https://linkedin.com/company/nitrostack-ai/>
-- GitHub: <https://github.com/nitrostackai>
-
+- **NitroStack Official Documentation**: <https://docs.nitrostack.ai>
+- **Model Context Protocol Specification**: <https://modelcontextprotocol.io>
