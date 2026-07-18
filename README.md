@@ -1,6 +1,6 @@
 # Verifai
 
-> 🏷️ **Track: BFSI & FinTech**
+> 🏷️ **Track: Enterprise AI & Workplace Automation**
 
 **AI Hallucination Detection & Trust Scoring MCP Server**
 
