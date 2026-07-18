@@ -377,7 +377,7 @@ function hasProperNounHallucination(claim: string, source: string): boolean {
   const adjustedClaim = words.join(' ');
 
   const capitalizedWords = adjustedClaim.match(/\b[A-Z][a-zA-Z]*\b/g) || [];
-  const sourceLower = source.toLowerCase();
+  const sourceLower = normalizeText(source).toLowerCase();
 
   for (const word of capitalizedWords) {
     if (!sourceLower.includes(word.toLowerCase())) {
