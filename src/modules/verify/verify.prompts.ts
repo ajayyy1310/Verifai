@@ -22,13 +22,35 @@ export class VerifyPrompts {
   async getAuditReport(args: { agentOutput?: string; sources?: string }, ctx: ExecutionContext) {
     ctx.logger.info('Generating audit report prompt for LLM');
 
+    if (!args.agentOutput?.trim() || !args.sources?.trim()) {
+      return [
+        {
+          role: 'system' as const,
+          content: `You are Verifai, an AI factual auditor and hallucination correction engine.
+The prompt was invoked with missing or empty inputs:
+- agentOutput: ${args.agentOutput ? `"${args.agentOutput}"` : 'undefined'}
+- sources: ${args.sources ? `"${args.sources}"` : 'undefined'}
+
+Your task is to politely ask the user to specify both:
+1. The actual statement to verify (agentOutput).
+2. The reference material to verify against (sources).
+
+Explain that both parameters are required to perform a valid audit and generate a trust score. Do not attempt to run the audit or display scores until they are provided.`
+        },
+        {
+          role: 'user' as const,
+          content: 'Please help me run a factual alignment audit.'
+        }
+      ];
+    }
+
     // Split sources by newline to form a sources array
-    const sourcesArray = (args.sources || '')
+    const sourcesArray = args.sources
       .split('\n')
       .map(s => s.trim())
       .filter(s => s.length > 0);
 
-    const { score, verdict, mismatches, claimDetails } = computeTrustScore(args.agentOutput || '', sourcesArray);
+    const { score, verdict, mismatches, claimDetails } = computeTrustScore(args.agentOutput, sourcesArray);
 
     const findingsSummary = `
 --- VERIFAI FACTUAL ALIGNMENT AUDIT FINDINGS ---
