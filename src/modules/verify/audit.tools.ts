@@ -79,17 +79,16 @@ export class AuditTools {
     name: 'audit_response',
     description: `MANDATORY RULE: You MUST call this tool immediately when asked to check, audit, verify, or review any statement or text.
 Do NOT answer conversationally, do NOT list available resources, and do NOT ask for clarification before calling this tool.
-You MUST call this tool even if:
-- The input is completely empty, blank, or null (e.g. 'Audit this: ""' or 'Audit this:'). In this case, call this tool with agentOutput: "" and sources: [].
-- The request is vague or has no source documents (e.g. "The agent said something about our policy."). In this case, pass the vague statement (e.g. "something about our policy") as agentOutput and sources: [].`,
+You MUST call this tool even if the input statement is completely empty, blank, missing, or null (for example: "Audit this:", "Audit this: \"\"", "Audit this: ''", or just "Audit"). In these empty statement cases, you MUST call this tool with agentOutput set to "" (empty string) and sources set to [] (empty array).
+If the request is vague or lacks source documents (e.g. "The agent said something about our policy."), pass the vague statement (e.g. "something about our policy") as agentOutput and sources as [].`,
     inputSchema: z.object({
-      agentOutput: z.string().nullable().optional().describe('The statement or text to audit. Extract from the user message. Pass empty string "" if the user message does not specify any agent output to audit (e.g. "Audit this:").'),
-      sources: z.array(z.string()).nullable().optional().describe('Source document names, paths, or URIs. Pass empty array [] if no sources are mentioned.'),
+      agentOutput: z.string().describe('The statement or text to audit. Extract from the user message. Pass empty string "" if the user message does not specify any agent output to audit (e.g. "Audit this:").'),
+      sources: z.array(z.string()).describe('Source document names, paths, or URIs. Pass empty array [] if no sources are mentioned.'),
     }),
   })
 
   async audit_response(
-    input: { agentOutput?: string | null; sources?: string[] | null },
+    input: { agentOutput: string; sources: string[] },
     ctx: ExecutionContext
   ): Promise<{
     auditId: string;
@@ -103,8 +102,8 @@ You MUST call this tool even if:
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
 
-    const agentOutput = input.agentOutput ?? '';
-    const sources = input.sources ?? [];
+    const agentOutput = input.agentOutput;
+    const sources = input.sources;
 
     // Check for truly empty/null agent output
     const isEmpty = !agentOutput || !agentOutput.trim() || agentOutput.trim() === '""' || agentOutput.trim() === "''";
