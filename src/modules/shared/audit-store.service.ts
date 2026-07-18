@@ -1,11 +1,25 @@
 import { Injectable } from '@nitrostack/core';
 import { AuditRecord } from '../../shared/types.js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class AuditStoreService {
   private records: Map<string, AuditRecord> = new Map();
+  private readonly filePath = path.join(process.cwd(), 'fixtures', 'live_audits.json');
 
   constructor() {
+    if (fs.existsSync(this.filePath)) {
+      try {
+        const raw = fs.readFileSync(this.filePath, 'utf8');
+        const list: AuditRecord[] = JSON.parse(raw);
+        list.forEach(r => this.records.set(r.id, r));
+        return;
+      } catch (err) {
+        // Fallback to default mock records
+      }
+    }
+
     // Initialize with mock history records normalized to 0-100 scale
     const mockAudits: AuditRecord[] = [
       {
@@ -327,6 +341,19 @@ export class AuditStoreService {
     mockAudits.forEach(record => {
       this.records.set(record.id, record);
     });
+    this.saveToDisk();
+  }
+
+  private saveToDisk(): void {
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(this.filePath, JSON.stringify(this.getAll(), null, 2), 'utf8');
+    } catch (err) {
+      // Ignore write errors to prevent crashing
+    }
   }
 
   getAll(): AuditRecord[] {
@@ -339,5 +366,6 @@ export class AuditStoreService {
 
   add(record: AuditRecord): void {
     this.records.set(record.id, record);
+    this.saveToDisk();
   }
 }
