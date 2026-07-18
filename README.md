@@ -8,6 +8,41 @@ Verifai is a Model Context Protocol (MCP) server designed to detect, analyze, an
 
 ---
 
+## 🚨 The Problem
+
+AI agents are being deployed at scale across enterprise workflows — drafting reports, answering policy questions, summarising financial data, and advising customers. But **AI models hallucinate**. They fabricate numbers, swap currencies, misattribute names, and confidently state things that directly contradict the source material they were given.
+
+In a workplace context, this is dangerous:
+
+- An AI agent tells a customer the return window is **60 days** — the policy says **30**.
+- A finance assistant states Q3 revenue was **$18 million** — the report says **$15 million**.
+- An HR bot says the company **hired** 200 engineers — the source says they were **laid off**.
+- A product assistant claims the laptop has **16 hours** of battery life — the spec sheet says **10**.
+
+There is no existing lightweight, deterministic layer that sits between an AI agent and its output to catch these mistakes **before they reach the user** — without requiring another expensive LLM call to verify.
+
+---
+
+## ✅ Our Solution
+
+**Verifai** is a real-time hallucination firewall exposed as an MCP server. It intercepts AI agent outputs, breaks them into fine-grained claims, and verifies each claim against authoritative source documents using a fully **deterministic, rule-based engine** — no LLMs, no guesswork.
+
+### How it works
+
+1. **Claim Extraction** — The agent's response is split into atomic, verifiable claims by parsing sentence boundaries, conjunctions, and clause separators.
+2. **Text Normalization** — Claims and sources are normalised (abbreviations, month names, number words, currency symbols) so comparisons are always apples-to-apples.
+3. **Factual Alignment** — Each claim is checked against source documents for entity overlap, exact number matching, semantic contradictions (e.g. *grew* vs *declined*), currency/unit swaps (e.g. *$1000* vs *€1000*), and proper noun hallucinations.
+4. **Trust Scoring** — A deterministic `0.0–1.0` trust score is computed from the ratio of supported claims. Scores map to three verdicts:
+   - ✅ `PASS` — Output is factually aligned with sources.
+   - ⚠️ `FLAG` — Partial alignment; downstream consumer should review.
+   - 🚫 `BLOCK` — Significant factual contradiction; output should not be delivered.
+5. **Audit Trail** — Every verification is logged with claim-level breakdowns, Jaccard similarity, entity overlap metrics, and source citations — creating a full accountability record.
+6. **Visual Dashboard** — Built-in MCP widgets surface live trust scores, verdict trends, and audit history directly inside compatible AI clients.
+
+> Verifai adds a trust layer to any AI agent workflow **without modifying the agent itself** — just plug in the MCP server and every agent response is automatically audited.
+
+
+
 ## Features
 
 - **Factual Hallucination Auditing** — Compares AI agent outputs against authoritative source material.
