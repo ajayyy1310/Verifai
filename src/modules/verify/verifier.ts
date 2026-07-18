@@ -486,7 +486,10 @@ export function getContextValidatedNumbers(
   const allSourceNumbers = new Set<string>();
 
   sources.forEach(source => {
-    const sourceFragments = extractClaims(source);
+    let t = normalizeText(source);
+    t = t.replace(/\.(\d)/g, '_DECIMAL_$1');
+    const sourceFragments = t.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0).map(s => s.replace(/_DECIMAL_/g, '.'));
+
     sourceFragments.forEach(fragment => {
       const fragmentEntities = extractEntities(fragment);
       const fragmentNumbers = extractNumbers(fragment);
