@@ -83,13 +83,13 @@ You MUST call this tool even if:
 - The input is completely empty, blank, or null (e.g. 'Audit this: ""' or 'Audit this:'). In this case, call this tool with agentOutput: "" and sources: [].
 - The request is vague or has no source documents (e.g. "The agent said something about our policy."). In this case, pass the vague statement (e.g. "something about our policy") as agentOutput and sources: [].`,
     inputSchema: z.object({
-      agentOutput: z.string().describe('The statement or text to audit. Extract from the user message. Pass empty string "" if the user message does not specify any agent output to audit (e.g. "Audit this:").'),
-      sources: z.array(z.string()).describe('Source document names, paths, or URIs. Pass empty array [] if no sources are mentioned.'),
+      agentOutput: z.string().nullable().optional().describe('The statement or text to audit. Extract from the user message. Pass empty string "" if the user message does not specify any agent output to audit (e.g. "Audit this:").'),
+      sources: z.array(z.string()).nullable().optional().describe('Source document names, paths, or URIs. Pass empty array [] if no sources are mentioned.'),
     }),
   })
 
   async audit_response(
-    input: { agentOutput: string; sources: string[] },
+    input: { agentOutput?: string | null; sources?: string[] | null },
     ctx: ExecutionContext
   ): Promise<{
     auditId: string;
@@ -103,14 +103,17 @@ You MUST call this tool even if:
     const auditId = randomUUID();
     const timestamp = new Date().toISOString();
 
+    const agentOutput = input.agentOutput ?? '';
+    const sources = input.sources ?? [];
+
     // Check for truly empty/null agent output
-    const isEmpty = !input.agentOutput || !input.agentOutput.trim() || input.agentOutput.trim() === '""' || input.agentOutput.trim() === "''";
+    const isEmpty = !agentOutput || !agentOutput.trim() || agentOutput.trim() === '""' || agentOutput.trim() === "''";
 
     if (isEmpty) {
       const emptyOutputRecord: AuditRecord = {
         id: auditId,
-        agentOutput: input.agentOutput,
-        sources: input.sources,
+        agentOutput: agentOutput,
+        sources: sources,
         trustScore: 0,
         verdict: 'BLOCK',
         mismatches: [
@@ -139,20 +142,20 @@ You MUST call this tool even if:
     }
 
     // Check for vague/context-free agent output
-    const extracted = extractClaims(input.agentOutput);
-    const words = input.agentOutput.trim().split(/\s+/);
-    const isNumericOnly = /^\s*[\d.,%$\s₹€£KMBLTcrL]+(?:\s*(?:million|billion|trillion|crore|lakh|percent|dollars|rupees|euros|pounds))?\s*$/i.test(input.agentOutput);
+    const extracted = extractClaims(agentOutput);
+    const words = agentOutput.trim().split(/\s+/);
+    const isNumericOnly = /^\s*[\d.,%$\s₹€£KMBLTcrL]+(?:\s*(?:million|billion|trillion|crore|lakh|percent|dollars|rupees|euros|pounds))?\s*$/i.test(agentOutput);
     
     const isVague = extracted.length === 0 || 
                     (!isNumericOnly && words.length < 2) ||
-                    input.agentOutput.toLowerCase().includes('something about') ||
-                    input.agentOutput.toLowerCase().includes('vague request') ||
-                    input.agentOutput.toLowerCase().includes('expected value');
+                    agentOutput.toLowerCase().includes('something about') ||
+                    agentOutput.toLowerCase().includes('vague request') ||
+                    agentOutput.toLowerCase().includes('expected value');
 
     if (isVague) {
       let issueText = `I need a bit more information to perform a meaningful audit:\n\n1. What specific statement or AI agent response would you like me to verify? (Please provide the exact text you want to audit)\n2. What source documents should I check it against? (Please provide URIs, file names, or paste the reference content directly)\n\nTrust score is undefined until a specific, verifiable statement and source documents are provided.`;
 
-      const lowerOutput = input.agentOutput.toLowerCase();
+      const lowerOutput = agentOutput.toLowerCase();
       if (lowerOutput.includes('warranty') || lowerOutput.includes('something about') || lowerOutput.includes('vague')) {
         issueText = `I'd be happy to help, but I need the actual response text to audit. Could you please provide:
 
@@ -170,8 +173,8 @@ Once you provide those details, I'll:
 
       const vagueRecord: AuditRecord = {
         id: auditId,
-        agentOutput: input.agentOutput,
-        sources: input.sources,
+        agentOutput: agentOutput,
+        sources: sources,
         trustScore: 0,
         verdict: 'BLOCK',
         mismatches: [
@@ -201,10 +204,10 @@ Once you provide those details, I'll:
 
 
     // Scenario 1: Check for empty sources list
-    if (!input.sources || input.sources.length === 0 || (input.sources.length === 1 && !input.sources[0].trim())) {
+    if (sources.length === 0 || (sources.length === 1 && !sources[0].trim())) {
       const emptyRecord: AuditRecord = {
         id: auditId,
-        agentOutput: input.agentOutput,
+        agentOutput: agentOutput,
         sources: [],
         trustScore: 0,
         verdict: 'BLOCK',
@@ -212,7 +215,7 @@ Once you provide those details, I'll:
           {
             claim: 'No sources provided',
             sourceText: 'Missing reference material.',
-            issue: `I appreciate you wanting to test the audit functionality, but I need source documents to perform a meaningful audit. The audit_response function requires:\n\n1. agentOutput — the response to verify (you've provided: "${input.agentOutput}")\n2. sources — an array of source documents to check the response against (you haven't provided any)\n\nHere are your options:\n\n• If you have source documents: Provide them as URIs or text content, and I'll audit the response against them.\n• If you're testing the audit system: You could provide a simple source like ["The Earth is the third planet from the Sun and orbits it annually"] and I'll run the audit.\n• If you want to see audit history instead: I can retrieve past audits using get_audit_log if you provide a date range.\n\nWould you like to:\n\n1. Provide some source documents now so I can run the audit?\n2. Check your existing audit history?\n3. Try a test audit with sample sources?\nLet me know how you'd like to proceed!`,
+            issue: `I appreciate you wanting to test the audit functionality, but I need source documents to perform a meaningful audit. The audit_response function requires:\n\n1. agentOutput — the response to verify (you've provided: "${agentOutput}")\n2. sources — an array of source documents to check the response against (you haven't provided any)\n\nHere are your options:\n\n• If you have source documents: Provide them as URIs or text content, and I'll audit the response against them.\n• If you're testing the audit system: You could provide a simple source like ["The Earth is the third planet from the Sun and orbits it annually"] and I'll run the audit.\n• If you want to see audit history instead: I can retrieve past audits using get_audit_log if you provide a date range.\n\nWould you like to:\n\n1. Provide some source documents now so I can run the audit?\n2. Check your existing audit history?\n3. Try a test audit with sample sources?\nLet me know how you'd like to proceed!`,
           }
         ],
         timestamp,
@@ -234,12 +237,12 @@ Once you provide those details, I'll:
     }
 
     // Resolve any source reference names/URIs to their actual content
-    const resolvedSources = input.sources.map(resolveSource);
+    const resolvedSources = sources.map(resolveSource);
 
     // Detect conflicts between the provided source documents
     const sourceConflict = detectSourceConflicts(resolvedSources);
 
-    const { score, verdict, mismatches, claimDetails } = computeTrustScore(input.agentOutput, resolvedSources);
+    const { score, verdict, mismatches, claimDetails } = computeTrustScore(agentOutput, resolvedSources);
 
     // Convert scores/overlaps to 0-100 range
     const trustScore100 = Math.round(score * 100);
@@ -258,8 +261,8 @@ Once you provide those details, I'll:
 
     const record: AuditRecord = {
       id: auditId,
-      agentOutput: input.agentOutput,
-      sources: input.sources,
+      agentOutput: agentOutput,
+      sources: sources,
       trustScore: trustScore100,
       verdict: sourceConflict && verdict === 'PASS' ? 'FLAG' : verdict,
       mismatches: allMismatches,
@@ -287,11 +290,11 @@ Once you provide those details, I'll:
 CRITICAL: ALWAYS call this tool IMMEDIATELY when the user asks to explain, detail, review mismatches, or follow up on an audit result. Pass the auditId returned by audit_response directly to this tool.
 If the audit ID is not found in the current session, the tool returns a helpful error message.`,
     inputSchema: z.object({
-      auditId: z.string().describe('The audit ID returned by audit_response to explain'),
+      auditId: z.string().nullable().optional().describe('The audit ID returned by audit_response to explain'),
     }),
   })
   async explain_audit(
-    input: { auditId: string },
+    input: { auditId?: string | null },
     ctx: ExecutionContext
   ): Promise<{
     auditId: string;
@@ -304,10 +307,15 @@ If the audit ID is not found in the current session, the tool returns a helpful 
     sourceConflict: string | undefined;
     claims: Claim[];
   }> {
-    const record = this.auditStore.getById(input.auditId);
+    const auditId = input.auditId;
+    if (!auditId) {
+      throw new Error(`Audit ID is required. Please check the ID or use get_audit_log to find valid audit IDs within a date range.`);
+    }
+
+    const record = this.auditStore.getById(auditId);
 
     if (!record) {
-      throw new Error(`Audit ID not found: '${input.auditId}'. Please check the ID or use get_audit_log to find valid audit IDs within a date range.`);
+      throw new Error(`Audit ID not found: '${auditId}'. Please check the ID or use get_audit_log to find valid audit IDs within a date range.`);
     }
 
     return {
