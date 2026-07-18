@@ -10,25 +10,25 @@ export class VerifyPrompts {
       {
         name: 'agentOutput',
         description: 'The AI agent response to verify',
-        required: true
+        required: false
       },
       {
         name: 'sources',
         description: 'The source documents/context to verify against',
-        required: true
+        required: false
       }
     ]
   })
-  async getAuditReport(args: { agentOutput: string; sources: string }, ctx: ExecutionContext) {
+  async getAuditReport(args: { agentOutput?: string; sources?: string }, ctx: ExecutionContext) {
     ctx.logger.info('Generating audit report prompt for LLM');
 
     // Split sources by newline to form a sources array
-    const sourcesArray = args.sources
+    const sourcesArray = (args.sources || '')
       .split('\n')
       .map(s => s.trim())
       .filter(s => s.length > 0);
 
-    const { score, verdict, mismatches, claimDetails } = computeTrustScore(args.agentOutput, sourcesArray);
+    const { score, verdict, mismatches, claimDetails } = computeTrustScore(args.agentOutput || '', sourcesArray);
 
     const findingsSummary = `
 --- VERIFAI FACTUAL ALIGNMENT AUDIT FINDINGS ---
