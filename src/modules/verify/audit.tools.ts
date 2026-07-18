@@ -32,6 +32,9 @@ function resolveSource(source: string): string {
   if (lowercase.includes('vacation') || lowercase.includes('leave_policy') || lowercase.includes('hr_policy')) {
     return 'HR Policy: Full-time employees are entitled to 15 days of paid vacation per year. Vacation days do not carry over to the next year.';
   }
+  if (lowercase.includes('forbes') || lowercase.includes('emergent') || lowercase.includes('unicorn') || lowercase.includes('2996003')) {
+    return 'Emergent, an AI-powered software creation platform, officially became a unicorn in July 2026 after securing $130 million in a Series C funding round. This investment valued the company at $1.5 billion, representing a significant fivefold increase in valuation from its previous round just four months ago. The funding round was led by Creaegis, with participation from co-lead investors Claypond Capital and Sentinel Global. Existing backers—including Khosla Ventures, SoftBank Vision Fund 2, Lightspeed, and Y Combinator—also contributed to the round. With this latest infusion, the company has raised a total of $230 million since its public launch in June 2025.';
+  }
   
   return source;
 }
