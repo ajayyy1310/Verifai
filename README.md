@@ -1,5 +1,7 @@
 # Verifai
 
+> 🏷️ **Track: BFSI & FinTech**
+
 **AI Hallucination Detection & Trust Scoring MCP Server**
 
 Verifai is a Model Context Protocol (MCP) server designed to detect, analyze, and score AI-generated hallucinations. By comparing agent statements against verified reference sources, Verifai computes deterministic trust scores, flags factual contradictions, and provides structured correction reports with citations.
